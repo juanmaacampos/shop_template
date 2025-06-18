@@ -16,22 +16,22 @@ export const MENU_CONFIG = {
   
   // 🆔 Business/Restaurant ID (UID del propietario en Firebase Auth)
   // 📝 Obtener ejecutando en consola: firebase.auth().currentUser.uid
-  businessId: "YOUR_BUSINESS_UID_HERE",
+  businessId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2",
   
   // 🔄 Restaurant ID (para compatibilidad con versiones anteriores)
-  restaurantId: "YOUR_BUSINESS_UID_HERE", // Mismo valor que businessId
+  restaurantId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2", // Mismo valor que businessId
   
   // 💳 MercadoPago Configuration
   // 📝 Obtener desde: https://www.mercadopago.com/developers/panel/app
   mercadoPago: {
-    publicKey: "YOUR_MERCADOPAGO_PUBLIC_KEY", // APP_USR-xxxxxxxxx format
+    publicKey: "APP_USR-aff124d3-9db8-432f-b97e-7cfd30fca245", // APP_USR-xxxxxxxxx format
     currency: "ARS", // ARS, USD, BRL, etc.
     enabled: true // Cambiar a false para deshabilitar pagos
   },
   
   // 🌐 URLs de tu aplicación
-  baseUrl: "https://your-username.github.io/your-repository", // Tu GitHub Pages URL
-  backendUrl: "https://your-region-your-project-id.cloudfunctions.net", // Tu Cloud Functions URL
+  baseUrl: "https://juanmaacampos.github.io/shop_template", // Tu GitHub Pages URL
+  backendUrl: "https://us-central1-cms-menu-7b4a4.cloudfunctions.net", // Tu Cloud Functions URL
   
   // 🧪 Testing/Development Configuration
   testing: {
@@ -41,7 +41,7 @@ export const MENU_CONFIG = {
   },
 
   // 🎨 Template Type (cambiar según tu tipo de negocio)
-  templateType: "restaurant", // Opciones: "restaurant", "store", "cafe", "bakery", "pharmacy"
+  templateType: "store", // Opciones: "restaurant", "store", "cafe", "bakery", "pharmacy"
   
   // 🌍 Localization
   locale: "es-AR", // es-AR, es-MX, en-US, pt-BR, etc.

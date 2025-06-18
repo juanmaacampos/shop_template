@@ -71,7 +71,7 @@ exports.createMercadoPagoPreference = onCall(async (request) => {
     logger.info("✅ Input validation passed");
 
     // 2. Obtener Access Token desde Secret Manager
-    const secretName = `MERCADOPAGO_ACCESS_TOKEN_${businessId}`;
+    const secretName = `SHOP_TEMPLATE_MP_ACCESS_TOKEN_${businessId}`;
     const projectId = process.env.GCLOUD_PROJECT;
     const secretPath = `projects/${projectId}/secrets/${secretName}/versions/latest`;
 
@@ -256,7 +256,7 @@ async function handlePaymentNotification(paymentId) {
     
     // 3b. Obtener Access Token general desde Secret Manager
     const projectId = process.env.GCLOUD_PROJECT;
-    const secretName = 'MERCADOPAGO_ACCESS_TOKEN_GENERAL';
+    const secretName = 'SHOP_TEMPLATE_MP_ACCESS_TOKEN_GENERAL';
     const secretPath = `projects/${projectId}/secrets/${secretName}/versions/latest`;
 
     let accessToken;
@@ -416,7 +416,7 @@ exports.createMercadoPagoPreferenceHTTP = onRequest(async (req, res) => {
     logger.info("✅ Input validation passed for HTTP request");
 
     // Get Access Token from Secret Manager
-    const secretName = `MERCADOPAGO_ACCESS_TOKEN_${businessId}`;
+    const secretName = `SHOP_TEMPLATE_MP_ACCESS_TOKEN_${businessId}`;
     const projectId = process.env.GCLOUD_PROJECT;
     const secretPath = `projects/${projectId}/secrets/${secretName}/versions/latest`;
 
