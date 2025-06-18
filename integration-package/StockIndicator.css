@@ -1,0 +1,286 @@
+/* Stock Indicator Styles */
+.stock-indicator {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.stock-indicator__content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stock-indicator__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.stock-indicator__text {
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+.stock-indicator__realtime {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  animation: realtime-pulse 2s infinite;
+}
+
+.stock-indicator__timestamp {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Tamaños */
+.stock-indicator--small .stock-indicator__icon {
+  font-size: 0.875rem;
+}
+
+.stock-indicator--small .stock-indicator__text {
+  font-size: 0.75rem;
+}
+
+.stock-indicator--large .stock-indicator__icon {
+  font-size: 1.25rem;
+}
+
+.stock-indicator--large .stock-indicator__text {
+  font-size: 1rem;
+}
+
+/* Estados de stock */
+.stock-in-stock {
+  color: #28a745;
+}
+
+.stock-low-stock {
+  color: #ffc107;
+}
+
+.stock-out-of-stock {
+  color: #dc3545;
+}
+
+.stock-unavailable {
+  color: #6c757d;
+}
+
+.stock-not-tracked {
+  color: #17a2b8;
+}
+
+.stock-unknown {
+  color: #6c757d;
+}
+
+/* Animación en tiempo real */
+@keyframes realtime-pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Stock Summary Styles */
+.stock-summary {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.stock-summary__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stock-summary__header h3 {
+  margin: 0;
+  color: #495057;
+  font-size: 1.125rem;
+}
+
+.stock-summary__realtime {
+  font-size: 0.875rem;
+  color: #28a745;
+  animation: realtime-pulse 2s infinite;
+}
+
+.stock-summary__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stock-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.stock-stat__icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.stock-stat__label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.stock-stat__count {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #495057;
+}
+
+/* Estados específicos para stats */
+.stock-stat--in-stock {
+  border-left: 4px solid #28a745;
+}
+
+.stock-stat--low-stock {
+  border-left: 4px solid #ffc107;
+}
+
+.stock-stat--out-of-stock {
+  border-left: 4px solid #dc3545;
+}
+
+.stock-stat--unavailable {
+  border-left: 4px solid #6c757d;
+}
+
+.stock-stat--not-tracked {
+  border-left: 4px solid #17a2b8;
+}
+
+.stock-summary__total {
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .stock-summary__stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .stock-stat {
+    padding: 0.5rem;
+  }
+  
+  .stock-stat__icon {
+    font-size: 1.25rem;
+  }
+  
+  .stock-stat__count {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stock-summary__stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stock-stat {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+  
+  .stock-stat__icon {
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+  }
+  
+  .stock-stat__info {
+    flex: 1;
+  }
+}
+
+/* Integración con menu items */
+.menu-item .stock-indicator {
+  margin-top: 0.5rem;
+}
+
+.menu-item .stock-indicator--small {
+  margin-top: 0.25rem;
+}
+
+/* Estados de hover para interactividad */
+.stock-indicator:hover .stock-indicator__realtime {
+  animation-duration: 0.5s;
+}
+
+/* Estilos para badges en menu items */
+.menu-item .stock-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+.stock-badge--in-stock {
+  color: #28a745;
+  border-color: #28a745;
+}
+
+.stock-badge--low-stock {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.stock-badge--out-of-stock {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.stock-badge--unavailable {
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Loading state */
+.stock-indicator--loading .stock-indicator__icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
