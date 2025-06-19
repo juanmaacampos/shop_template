@@ -78,7 +78,7 @@ class MercadoPagoService {
         auto_return: 'approved',
         external_reference: orderData.orderId,
         statement_descriptor: 'RESTAURANTE',
-        notification_url: `https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV2`
+        notification_url: `https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV3`
       };
 
       // Hacer la llamada directa a la API de MercadoPago

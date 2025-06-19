@@ -1,9 +1,47 @@
 import React, { useState } from 'react';
 import { useMenu, useCart } from './useMenu.js';
-import { useRealTimeStock } from './useRealTimeStock.js';
-import { StockIndicator } from './StockIndicator.jsx';
-import { MENU_CONFIG } from './config.js';
 import './MenuComponents.css';
+
+// Funciones helper para manejo de stock
+function getStockClass(item) {
+  if (!item.trackStock) return 'stock-unlimited';
+  if (item.stock <= 0 || item.isAvailable === false) return 'stock-out';
+  if (item.stock <= 5) return 'stock-low';
+  return 'stock-normal';
+}
+
+function getStockIcon(item) {
+  if (!item.trackStock) return '∞';
+  if (item.stock <= 0 || item.isAvailable === false) return '❌';
+  if (item.stock <= 5) return '⚠️';
+  return '✅';
+}
+
+function getStockText(item) {
+  if (!item.trackStock) return 'Ilimitado';
+  if (item.stock <= 0 || item.isAvailable === false) return 'Sin stock';
+  if (item.stock <= 5) return `${item.stock} (Últimas unidades)`;
+  return `${item.stock} disponibles`;
+}
+
+function isItemAvailable(item) {
+  if (item.isAvailable === false) return false;
+  if (!item.trackStock) return true;
+  return item.stock > 0;
+}
+
+function getButtonClass(item) {
+  if (!isItemAvailable(item)) return 'add-button disabled';
+  if (item.trackStock && item.stock <= (item.minStock || 5)) return 'add-button warning';
+  return 'add-button';
+}
+
+function getButtonText(item, terminology = {}) {
+  if (item.isAvailable === false) return 'No disponible';
+  if (item.trackStock && item.stock <= 0) return 'Sin stock';
+  if (item.trackStock && item.stock <= 5) return `Agregar (quedan ${item.stock})`;
+  return terminology.addToCart || 'Agregar al carrito';
+}
 
 // Componente para navegación de categorías
 export function CategoryNav({ categories, terminology = {}, className = "" }) {
@@ -87,10 +125,7 @@ export function MenuDisplay({
   showImages = true,
   showPrices = true,
   showDescription = true,
-  terminology = {},
-  businessId = null,
-  enableRealTimeStock = false,
-  db = null
+  terminology = {}
 }) {
   if (loading) {
     return <div className="menu-loading">🍽️ Cargando {terminology.menuName || 'menú'} delicioso...</div>;
@@ -122,10 +157,6 @@ export function MenuDisplay({
                 showPrice={showPrices}
                 showDescription={showDescription}
                 terminology={terminology}
-                businessId={businessId}
-                categoryId={category.id}
-                enableRealTimeStock={enableRealTimeStock}
-                db={db}
               />
             ))}
           </div>
@@ -142,40 +173,13 @@ export function MenuItem({
   showImage = true, 
   showPrice = true, 
   showDescription = true,
-  terminology = {},
-  businessId = null,
-  categoryId = null,
-  enableRealTimeStock = false,
-  db = null
+  terminology = {}
 }) {
-  const imageSource = item.imageUrl || item.image;
-  
-  // Hook para stock en tiempo real si está habilitado
-  const stockEnabled = enableRealTimeStock && businessId && categoryId && item.trackStock && db;
-  const productIds = stockEnabled ? [{ id: item.id, categoryId }] : [];
-  
-  const {
-    stockData,
-    isRealTimeActive,
-    getStockStatus,
-    getProductStock,
-    isProductAvailable
-  } = useRealTimeStock(productIds, businessId, stockEnabled, db);
-  
-  // Usar datos de stock en tiempo real si están disponibles, sino usar datos del item
-  const currentStock = stockEnabled ? getProductStock(item.id) : (item.stock || 0);
-  const currentAvailable = stockEnabled ? isProductAvailable(item.id) : (item.isAvailable !== false);
-  const stockStatus = stockEnabled ? getStockStatus(item.id) : 
-    (!item.trackStock ? 'not-tracked' : 
-     (!item.isAvailable ? 'unavailable' : 
-      (item.stock <= 0 ? 'out-of-stock' : 
-       (item.stock <= (MENU_CONFIG.realTimeStock?.lowStockThreshold || 5) ? 'low-stock' : 'in-stock'))));
-
   return (
     <div className="menu-item">
       {showImage && (
         <ImageWithFallback 
-          src={imageSource} 
+          src={item.imageUrl} 
           alt={item.name} 
           className="item-image"
         />
@@ -193,31 +197,21 @@ export function MenuItem({
         
         <div className="item-tags">
           {item.isFeatured && <span className="tag featured">⭐ Destacado</span>}
-          {!currentAvailable && <span className="tag unavailable">No disponible</span>}
+          {!item.isAvailable && <span className="tag unavailable">No disponible</span>}
+          {item.trackStock && typeof item.stock === 'number' && (
+            <span className={`tag stock ${getStockClass(item)}`}>
+              {getStockIcon(item)} Stock: {getStockText(item)}
+            </span>
+          )}
         </div>
-        
-        {/* Indicador de stock en tiempo real */}
-        {item.trackStock && (
-          <StockIndicator
-            stock={currentStock}
-            isAvailable={currentAvailable}
-            trackStock={item.trackStock}
-            status={stockStatus}
-            showText={true}
-            size="small"
-            isRealTime={isRealTimeActive && stockEnabled}
-          />
-        )}
         
         {onAddToCart && (
           <button 
-            className="add-button"
+            className={`add-button ${getButtonClass(item)}`}
             onClick={() => onAddToCart(item)}
-            disabled={!currentAvailable || (item.trackStock && currentStock <= 0)}
+            disabled={!isItemAvailable(item)}
           >
-            {!currentAvailable ? 'No disponible' : 
-             (item.trackStock && currentStock <= 0) ? 'Sin stock' : 
-             (terminology.addToCart || 'Agregar al carrito')}
+            {getButtonText(item, terminology)}
           </button>
         )}
       </div>

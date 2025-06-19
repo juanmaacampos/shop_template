@@ -111,10 +111,10 @@ else
     ((errors++))
 fi
 
-if gcloud functions describe mercadoPagoWebhookV2 --region=us-central1 >/dev/null 2>&1; then
-    echo -e "${GREEN}   ✅ Cloud Function 'mercadoPagoWebhookV2' desplegada${NC}"
+if gcloud functions describe mercadoPagoWebhookV3 --region=us-central1 >/dev/null 2>&1; then
+    echo -e "${GREEN}   ✅ Cloud Function 'mercadoPagoWebhookV3' desplegada${NC}"
 else
-    echo -e "${RED}   ❌ Cloud Function 'mercadoPagoWebhookV2' no encontrada${NC}"
+    echo -e "${RED}   ❌ Cloud Function 'mercadoPagoWebhookV3' no encontrada${NC}"
     ((errors++))
 fi
 

@@ -6,7 +6,9 @@ export {
   useMenuIntegration,
   useMenuWithTerminology,
   useBusinessTerminology,
-  useFeaturedItems
+  useFeaturedItems,
+  useMenuWithHidden,
+  useAvailableItems
 } from './useMenu.js';
 export { 
   MenuDisplay, 
@@ -26,6 +28,19 @@ export {
   StockIndicator, 
   StockSummary 
 } from './StockIndicator.jsx';
+
+// 👁️ Exportaciones del sistema de visibilidad de items
+export { 
+  ItemVisibilityManager 
+} from './ItemVisibilityManager.jsx';
+
+// 📊 Ejemplos y plantillas
+export { 
+  default as StockExamples 
+} from './stock-examples.jsx';
+export { 
+  default as VisibilityExamples 
+} from './visibility-examples.jsx';
 
 // Configuración y utilidades
 export { MENU_CONFIG } from './config.js';

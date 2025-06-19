@@ -6,6 +6,33 @@ import { getFirestore } from 'firebase/firestore';
 import './MenuComponents.css';
 import './StockIndicator.css';
 
+// Utilidades para manejar items ocultos y disponibilidad
+function isItemVisible(item) {
+  return !item.isHidden;
+}
+
+function isItemAvailable(item) {
+  if (item.isHidden) return false;
+  if (item.isAvailable === false) return false;
+  if (!item.trackStock) return true;
+  return item.stock > 0;
+}
+
+function getButtonClass(item) {
+  if (item.isHidden) return 'add-button hidden';
+  if (!isItemAvailable(item)) return 'add-button disabled';
+  if (item.trackStock && item.stock <= (item.minStock || 5)) return 'add-button warning';
+  return 'add-button';
+}
+
+function getButtonText(item, terminology = {}) {
+  if (item.isHidden) return 'Oculto';
+  if (item.isAvailable === false) return 'No disponible';
+  if (item.trackStock && item.stock <= 0) return 'Sin stock';
+  if (item.trackStock && item.stock <= 5) return `Agregar (quedan ${item.stock})`;
+  return terminology.addToCart || 'Agregar al carrito';
+}
+
 // Componente para navegación de categorías
 export function CategoryNav({ categories, terminology = {}, className = "" }) {
   if (!categories || categories.length === 0) return null;
@@ -171,7 +198,7 @@ export function MenuItem({
        (item.stock <= 5 ? 'low-stock' : 'in-stock'))));
 
   return (
-    <div className="menu-item">
+    <div className={`menu-item ${item.isHidden ? 'hidden' : ''}`}>
       {showImage && (
         <ImageWithFallback 
           src={imageSource} 
@@ -192,7 +219,8 @@ export function MenuItem({
         
         <div className="item-tags">
           {item.isFeatured && <span className="tag featured">⭐ Destacado</span>}
-          {!currentAvailable && <span className="tag unavailable">No disponible</span>}
+          {item.isHidden && <span className="tag hidden">👁️‍🗨️ Oculto</span>}
+          {!currentAvailable && !item.isHidden && <span className="tag unavailable">No disponible</span>}
         </div>
         
         {/* Indicador de stock en tiempo real */}
@@ -211,13 +239,11 @@ export function MenuItem({
         
         {onAddToCart && (
           <button 
-            className="add-button"
-            onClick={() => onAddToCart(item)}
-            disabled={!currentAvailable || (item.trackStock && currentStock <= 0)}
+            className={getButtonClass(item)}
+            onClick={() => !item.isHidden && onAddToCart(item)}
+            disabled={item.isHidden || !currentAvailable || (item.trackStock && currentStock <= 0)}
           >
-            {!currentAvailable ? 'No disponible' : 
-             (item.trackStock && currentStock <= 0) ? 'Sin stock' : 
-             (terminology.addToCart || 'Agregar al carrito')}
+            {getButtonText(item, terminology)}
           </button>
         )}
       </div>

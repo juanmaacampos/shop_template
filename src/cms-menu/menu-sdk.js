@@ -209,16 +209,111 @@ export class MenuSDK {
             itemData.imageUrl = null;
           }
           
-          categoryData.items.push(itemData);
+          // Solo incluir items que no estén ocultos del público
+          if (!itemData.isHidden) {
+            categoryData.items.push(itemData);
+          }
         }
         
-        menu.push(categoryData);
+        // Solo incluir categorías que tengan items visibles
+        if (categoryData.items.length > 0) {
+          menu.push(categoryData);
+        }
       }
       
       console.log('✅ Full menu loaded successfully:', menu.length, 'categories');
       return menu;
     } catch (error) {
       console.error('❌ Error getting full menu:', error);
+      
+      // Proporcionar más contexto sobre el error
+      if (error.code === 'unavailable') {
+        throw new Error('Firebase service is temporarily unavailable. Please try again later.');
+      } else if (error.code === 'permission-denied') {
+        throw new Error('Access denied. Please check your Firebase security rules.');
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene el menú completo incluyendo items ocultos (para uso administrativo)
+   */
+  async getFullMenuWithHidden() {
+    try {
+      await this._ensureInitialized();
+      
+      console.log('🍽️ Fetching full menu with hidden items for business:', this.businessId);
+      
+      // Intentar con la nueva estructura businesses
+      let categoriesRef = collection(this.db, 'businesses', this.businessId, 'menu');
+      let categoriesQuery = query(categoriesRef, orderBy('order', 'asc'));
+      let categoriesSnapshot = await getDocs(categoriesQuery);
+      
+      // Si no hay categorías en businesses, intentar con restaurants (compatibilidad)
+      if (categoriesSnapshot.empty) {
+        console.log('📍 Trying restaurants collection for menu...');
+        categoriesRef = collection(this.db, 'restaurants', this.businessId, 'menu');
+        categoriesQuery = query(categoriesRef, orderBy('order', 'asc'));
+        categoriesSnapshot = await getDocs(categoriesQuery);
+      }
+      
+      console.log('📂 Found', categoriesSnapshot.size, 'menu categories');
+      
+      const menu = [];
+      
+      for (const categoryDoc of categoriesSnapshot.docs) {
+        const categoryData = {
+          id: categoryDoc.id,
+          ...categoryDoc.data(),
+          items: []
+        };
+        
+        // Obtener items de esta categoría
+        const itemsRef = collection(categoryDoc.ref, 'items');
+        const itemsQuery = query(itemsRef, orderBy('name', 'asc'));
+        const itemsSnapshot = await getDocs(itemsQuery);
+        
+        console.log(`📋 Category "${categoryData.name}": ${itemsSnapshot.size} items (including hidden)`);
+        
+        for (const itemDoc of itemsSnapshot.docs) {
+          const itemData = {
+            id: itemDoc.id,
+            ...itemDoc.data()
+          };
+          
+          // Resolver URL de imagen - priorizar imageUrl sobre image
+          let imageSource = itemData.imageUrl || itemData.image;
+          
+          if (imageSource) {
+            try {
+              const resolvedUrl = await this._resolveImageUrl(imageSource);
+              // Establecer tanto image como imageUrl para compatibilidad
+              itemData.image = resolvedUrl;
+              itemData.imageUrl = resolvedUrl;
+            } catch (imageError) {
+              console.warn(`⚠️ Could not resolve image for item ${itemData.name}:`, imageError.message);
+              itemData.image = null;
+              itemData.imageUrl = null;
+            }
+          } else {
+            itemData.image = null;
+            itemData.imageUrl = null;
+          }
+          
+          // Incluir todos los items, incluso los ocultos
+          categoryData.items.push(itemData);
+        }
+        
+        // Incluir todas las categorías, incluso si no tienen items visibles
+        menu.push(categoryData);
+      }
+      
+      console.log('✅ Full menu with hidden items loaded successfully:', menu.length, 'categories');
+      return menu;
+    } catch (error) {
+      console.error('❌ Error getting full menu with hidden items:', error);
       
       // Proporcionar más contexto sobre el error
       if (error.code === 'unavailable') {
@@ -342,6 +437,124 @@ export class MenuSDK {
       throw new Error('SDK not initialized. Call initialize() first.');
     }
     return await this.orderService.getOrder(orderId);
+  }
+
+  /**
+   * Obtiene solo los platos destacados (excluye items ocultos)
+   */
+  async getFeaturedItems() {
+    try {
+      const menu = await this.getFullMenu();
+      const featuredItems = [];
+      
+      menu.forEach(category => {
+        const featured = category.items.filter(item => 
+          item.isFeatured && 
+          item.isAvailable !== false && 
+          !item.isHidden // Excluir items ocultos
+        );
+        featuredItems.push(...featured.map(item => ({
+          ...item,
+          categoryName: category.name,
+          categoryId: category.id
+        })));
+      });
+      
+      return featuredItems;
+    } catch (error) {
+      console.error('Error getting featured items:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene solo los items disponibles (con stock y no ocultos)
+   */
+  async getAvailableItems() {
+    try {
+      const menu = await this.getFullMenu();
+      const availableItems = [];
+      
+      menu.forEach(category => {
+        const available = category.items.filter(item => {
+          // Si no tiene control de stock, siempre está disponible (si no está oculto)
+          if (!item.trackStock) {
+            return item.isAvailable !== false && !item.isHidden;
+          }
+          
+          // Si tiene control de stock, verificar que tenga stock y esté disponible
+          return item.stock > 0 && item.isAvailable !== false && !item.isHidden;
+        });
+        
+        availableItems.push(...available.map(item => ({
+          ...item,
+          categoryName: category.name,
+          categoryId: category.id
+        })));
+      });
+      
+      return availableItems;
+    } catch (error) {
+      console.error('Error getting available items:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtiene el estado del stock de un item específico
+   */
+  getStockStatus(item) {
+    if (!item.trackStock) {
+      return {
+        status: 'not-tracked',
+        text: 'Sin control de stock',
+        icon: '📦',
+        cssClass: 'stock-normal'
+      };
+    }
+
+    if (item.isHidden) {
+      return {
+        status: 'hidden',
+        text: 'Oculto',
+        icon: '👁️‍🗨️',
+        cssClass: 'stock-hidden'
+      };
+    }
+
+    if (item.isAvailable === false) {
+      return {
+        status: 'unavailable',
+        text: 'No disponible',
+        icon: '🚫',
+        cssClass: 'stock-unavailable'
+      };
+    }
+
+    if (item.stock <= 0) {
+      return {
+        status: 'out-of-stock',
+        text: 'Sin stock',
+        icon: '❌',
+        cssClass: 'stock-empty'
+      };
+    }
+
+    if (item.stock <= (item.minStock || 5)) {
+      return {
+        status: 'low-stock',
+        text: `Stock bajo (${item.stock})`,
+        icon: '⚠️',
+        cssClass: 'stock-low'
+      };
+    }
+
+    return {
+      status: 'in-stock',
+      text: `En stock (${item.stock})`,
+      icon: '✅',
+      cssClass: 'stock-normal'
+    };
   }
 }
 

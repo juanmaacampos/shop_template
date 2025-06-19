@@ -141,7 +141,7 @@ exports.createMercadoPagoPreference = onCall(async (request) => {
       },
       auto_return: "approved", // Solo auto-redirige en pagos aprobados
       external_reference: orderId,
-      notification_url: `https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV2`,
+      notification_url: `https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV3`,
       statement_descriptor: "RESTAURANTE",
       metadata: {
         business_id: businessId,
@@ -193,7 +193,7 @@ exports.createMercadoPagoPreference = onCall(async (request) => {
  * Webhook para recibir notificaciones de MercadoPago
  * HTTP function que maneja las notificaciones de estado de pago
  */
-exports.mercadoPagoWebhookV2 = onRequest(async (req, res) => {
+exports.mercadoPagoWebhookV3 = onRequest(async (req, res) => {
   try {
     logger.info("🔔 MercadoPago webhook received:", {
       method: req.method,
@@ -480,7 +480,7 @@ exports.createMercadoPagoPreferenceHTTP = onRequest(async (req, res) => {
       external_reference: orderId,
       back_urls: backUrls,
       auto_return: 'approved',
-      notification_url: 'https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV2',
+      notification_url: 'https://us-central1-cms-menu-7b4a4.cloudfunctions.net/mercadoPagoWebhookV3',
       metadata: {
         business_id: businessId,
         order_id: orderId

@@ -18,8 +18,20 @@ export const MENU_CONFIG = {
   // 📝 Obtener ejecutando en consola: firebase.auth().currentUser.uid
   businessId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2",
   
+  // 👁️ Configuración de Visibilidad de Items
+  itemVisibility: {
+    // Solo items visibles son mostrados a los clientes por defecto
+    hideInvisibleItems: true,
+    
+    // Permitir a administradores ver items ocultos
+    adminCanSeeHidden: true,
+    
+    // Campos que controlan la visibilidad en Firebase:
+    // - isHidden: boolean (true = oculto del público)
+    // - isAvailable: boolean (false = no disponible)
+    // - stock: number (0 = sin stock, si trackStock es true)
+  },
 
-  
   // 💳 MercadoPago Configuration
   // 📝 Obtener desde: https://www.mercadopago.com/developers/panel/app
   mercadoPago: {

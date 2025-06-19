@@ -14,11 +14,22 @@ export const MENU_CONFIG = {
   
   // ✅ Business ID (recomendado)
   businessId: "HsuTZWhRVkT88a0WOztELGzJUhl1",
-
-  // 📦 Real-time stock configuration
-  realTimeStock: {
-    enabled: true, // Habilitar stock en tiempo real
-    lowStockThreshold: 5 // Umbral para "poco stock"
+  
+  // 🔄 Restaurant ID (para compatibilidad - mismo valor que businessId)
+  restaurantId: "HsuTZWhRVkT88a0WOztELGzJUhl1",
+  
+  // 👁️ Configuración de Items Ocultos
+  itemVisibility: {
+    // Solo items visibles son mostrados a los clientes por defecto
+    hideInvisibleItems: true,
+    
+    // Permitir a administradores ver items ocultos
+    adminCanSeeHidden: true,
+    
+    // Campos de control en Firebase:
+    // - isHidden: boolean (true = oculto del público)
+    // - isAvailable: boolean (false = no disponible)
+    // - stock: number (0 = sin stock, si trackStock es true)
   }
 };
 
@@ -30,7 +41,8 @@ export const MENU_CONFIG = {
 // 4. Copia ese UID y reemplaza "YOUR_BUSINESS_UID_HERE" arriba
 
 export function validateConfig() {
-  if (MENU_CONFIG.businessId === "YOUR_BUSINESS_UID_HERE") {
+  if (MENU_CONFIG.businessId === "YOUR_BUSINESS_UID_HERE" || 
+      MENU_CONFIG.restaurantId === "YOUR_BUSINESS_UID_HERE") {
     console.warn("⚠️ Configuración incompleta!");
     console.log("📝 Para obtener tu Business UID:");
     console.log("1. Ve a tu panel CMS de menús");

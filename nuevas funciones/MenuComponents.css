@@ -88,11 +88,6 @@
 /* Categorías del menú */
 .menu-category {
   margin-bottom: 3rem;
-  scroll-margin-top: 2rem; /* Para navegación suave */
-}
-
-.menu-category:target {
-  scroll-margin-top: 2rem;
 }
 
 .category-title {
@@ -109,62 +104,6 @@
   margin-bottom: 1.5rem;
   font-size: 1rem;
   line-height: 1.6;
-}
-
-/* Navegación de categorías */
-.category-nav {
-  background: var(--menu-bg-alt);
-  border-radius: var(--menu-radius);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  border: 1px solid var(--menu-border);
-}
-
-.category-nav-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--menu-text);
-  margin: 0 0 1rem 0;
-}
-
-.category-nav-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.category-nav-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--menu-bg);
-  border: 1px solid var(--menu-border);
-  border-radius: 20px;
-  text-decoration: none;
-  color: var(--menu-text);
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.category-nav-item:hover {
-  background: var(--menu-primary);
-  color: white;
-  transform: translateY(-1px);
-}
-
-.item-count {
-  background: var(--menu-primary);
-  color: white;
-  border-radius: 12px;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.category-nav-item:hover .item-count {
-  background: white;
-  color: var(--menu-primary);
 }
 
 /* Grid de items */
@@ -319,17 +258,17 @@
    =============================================== */
 
 /* Tags de stock */
-.tag.stock {
+.tag.stock-normal {
   background-color: var(--menu-success);
   color: white;
 }
 
-.tag.stock.low-stock {
+.tag.stock-low {
   background-color: var(--menu-warning);
   color: white;
 }
 
-.tag.stock.out-of-stock {
+.tag.stock-empty {
   background-color: var(--menu-danger);
   color: white;
 }
@@ -347,12 +286,12 @@
   transform: none;
 }
 
-/* Item sin stock - efecto visual */
-.menu-item:has(.out-of-stock) {
+/* Item sin stock */
+.menu-item:has(.stock-empty) {
   opacity: 0.7;
 }
 
-.menu-item:has(.out-of-stock) .item-image {
+.menu-item:has(.stock-empty) .item-image {
   filter: grayscale(50%);
 }
 
@@ -376,7 +315,8 @@
 }
 
 .add-button:disabled {
-  background: var(--menu-text-light);
+  background: #cbd5e0;
+  color: #a0aec0;
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -437,7 +377,9 @@
 
 /* Items del carrito */
 .cart-items {
-  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .cart-item {
@@ -634,4 +576,46 @@
   .cart-item-controls {
     align-self: flex-end;
   }
+}
+
+/* ===============================================
+   ESTILOS PARA CONTROL DE STOCK
+   =============================================== */
+
+/* Tags de stock */
+.tag.stock-normal {
+  background-color: var(--menu-success);
+  color: white;
+}
+
+.tag.stock-low {
+  background-color: var(--menu-warning);
+  color: white;
+}
+
+.tag.stock-empty {
+  background-color: var(--menu-danger);
+  color: white;
+}
+
+/* Botón deshabilitado por falta de stock */
+.add-button:disabled {
+  background-color: #cbd5e0;
+  color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.add-button:disabled:hover {
+  background-color: #cbd5e0;
+  transform: none;
+}
+
+/* Item sin stock - efecto visual */
+.menu-item:has(.stock-empty) {
+  opacity: 0.7;
+}
+
+.menu-item:has(.stock-empty) .item-image {
+  filter: grayscale(50%);
 }

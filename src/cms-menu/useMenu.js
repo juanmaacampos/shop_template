@@ -44,6 +44,62 @@ export function useMenu(menuSDK) {
   };
 }
 
+// Hook para obtener menú incluyendo items ocultos (para administradores)
+export function useMenuWithHidden(menuSDK) {
+  const [business, setBusiness] = useState(null);
+  const [menu, setMenu] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const [businessData, menuData] = await Promise.all([
+          menuSDK.getBusinessInfo(),
+          menuSDK.getFullMenuWithHidden()
+        ]);
+        
+        setBusiness(businessData);
+        setMenu(menuData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error loading menu with hidden items:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (menuSDK) {
+      loadData();
+    }
+  }, [menuSDK]);
+
+  const refreshMenu = async () => {
+    if (menuSDK) {
+      try {
+        setLoading(true);
+        const menuData = await menuSDK.getFullMenuWithHidden();
+        setMenu(menuData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  return { 
+    business, 
+    menu, 
+    loading, 
+    error,
+    refreshMenu
+  };
+}
+
 // Hook para manejar carrito
 export function useCart() {
   const [cart, setCart] = useState([]);
@@ -140,7 +196,7 @@ export function useCart() {
   };
 }
 
-// Hook para solo platos destacados
+// Hook para solo platos destacados (excluye items ocultos automáticamente)
 export function useFeaturedItems(menuSDK) {
   const [featuredItems, setFeaturedItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -151,10 +207,12 @@ export function useFeaturedItems(menuSDK) {
       try {
         setLoading(true);
         setError(null);
+        // Este método ya filtra items ocultos automáticamente
         const items = await menuSDK.getFeaturedItems();
         setFeaturedItems(items);
       } catch (err) {
         setError(err.message);
+        console.error('Error loading featured items:', err);
       } finally {
         setLoading(false);
       }
@@ -166,6 +224,35 @@ export function useFeaturedItems(menuSDK) {
   }, [menuSDK]);
 
   return { featuredItems, loading, error };
+}
+
+// Hook para items disponibles (excluye ocultos y sin stock)
+export function useAvailableItems(menuSDK) {
+  const [availableItems, setAvailableItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadAvailable() {
+      try {
+        setLoading(true);
+        setError(null);
+        const items = await menuSDK.getAvailableItems();
+        setAvailableItems(items);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error loading available items:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (menuSDK) {
+      loadAvailable();
+    }
+  }, [menuSDK]);
+
+  return { availableItems, loading, error };
 }
 
 // Hook para terminología dinámica basada en el tipo de negocio
