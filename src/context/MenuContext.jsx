@@ -30,7 +30,7 @@ export const MenuProvider = ({ children }) => {
         
         const menuSDK = createMenuSDK(
           MENU_CONFIG.firebaseConfig,
-          MENU_CONFIG.businessId || MENU_CONFIG.restaurantId
+          MENU_CONFIG.businessId
         );
         
         setSdk(menuSDK);
@@ -45,7 +45,7 @@ export const MenuProvider = ({ children }) => {
           console.warn('⚠️ Business info not found, but continuing with menu data:', infoError.message);
           // Set default business info
           setRestaurantInfo({
-            businessId: MENU_CONFIG.businessId || MENU_CONFIG.restaurantId,
+            businessId: MENU_CONFIG.businessId,
             name: 'Mi Negocio',
             businessType: 'restaurant',
             isActive: true

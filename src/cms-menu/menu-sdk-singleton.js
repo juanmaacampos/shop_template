@@ -8,24 +8,24 @@ class MenuSDKManager {
     this.instances = new Map();
   }
 
-  getInstance(firebaseConfig, restaurantId) {
-    const key = `${restaurantId}-${firebaseConfig.projectId}`;
+  getInstance(firebaseConfig, businessId) {
+    const key = `${businessId}-${firebaseConfig.projectId}`;
     
     if (!this.instances.has(key)) {
-      console.log('🏗️ Creating new MenuSDK instance for:', restaurantId);
-      const sdk = createMenuSDK(firebaseConfig, restaurantId);
+      console.log('🏗️ Creating new MenuSDK instance for:', businessId);
+      const sdk = createMenuSDK(firebaseConfig, businessId);
       this.instances.set(key, sdk);
     } else {
-      console.log('♻️ Reusing existing MenuSDK instance for:', restaurantId);
+      console.log('♻️ Reusing existing MenuSDK instance for:', businessId);
     }
     
     return this.instances.get(key);
   }
 
-  clearInstance(firebaseConfig, restaurantId) {
-    const key = `${restaurantId}-${firebaseConfig.projectId}`;
+  clearInstance(firebaseConfig, businessId) {
+    const key = `${businessId}-${firebaseConfig.projectId}`;
     if (this.instances.has(key)) {
-      console.log('🗑️ Clearing MenuSDK instance for:', restaurantId);
+      console.log('🗑️ Clearing MenuSDK instance for:', businessId);
       this.instances.delete(key);
     }
   }

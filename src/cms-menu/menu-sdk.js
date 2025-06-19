@@ -4,11 +4,10 @@ import { globalFirebaseManager } from './firebase-manager.js';
 import { OrderService } from './order-service.js';
 
 export class MenuSDK {
-  constructor(firebaseConfig, businessIdOrRestaurantId) {
+  constructor(firebaseConfig, businessId) {
     this.firebaseConfig = firebaseConfig;
-    // Soporte para ambos: businessId (nuevo) y restaurantId (compatibilidad)
-    this.businessId = businessIdOrRestaurantId;
-    this.restaurantId = businessIdOrRestaurantId; // Mantener para compatibilidad
+    // Solo usar businessId
+    this.businessId = businessId;
     this.app = null;
     this.db = null;
     this.storage = null;
@@ -117,14 +116,14 @@ export class MenuSDK {
     try {
       await this._ensureInitialized();
       
-      console.log('🔍 Fetching restaurant info for:', this.restaurantId);
+      console.log('🔍 Fetching business info for:', this.businessId);
       
       // Intentar primero con businesses (nuevo sistema)
       try {
         return await this.getBusinessInfo();
       } catch (businessError) {
         // Fallback: usar colección restaurants original
-        const restaurantRef = doc(this.db, 'restaurants', this.restaurantId);
+        const restaurantRef = doc(this.db, 'restaurants', this.businessId);
         const restaurantDoc = await getDoc(restaurantRef);
         
         if (!restaurantDoc.exists()) {

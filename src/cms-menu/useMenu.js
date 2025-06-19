@@ -259,7 +259,7 @@ export function useMenuIntegration(config, options = { enabled: true }) {
   useEffect(() => {
     if (config && options.enabled) {
       import('./menu-sdk.js').then(({ createMenuSDK }) => {
-        const sdk = createMenuSDK(config.firebaseConfig, config.businessId || config.restaurantId);
+        const sdk = createMenuSDK(config.firebaseConfig, config.businessId);
         setMenuSDK(sdk);
         
         // Wait for SDK initialization to get firebaseManager

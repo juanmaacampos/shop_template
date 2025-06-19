@@ -45,7 +45,7 @@ export class PaymentService {
         const createPreference = httpsCallable(this.functions, 'createMercadoPagoPreference');
         
         const result = await createPreference({
-          businessId: orderData.restaurantId, // Convert restaurantId to businessId for Cloud Function
+          businessId: orderData.businessId, // ID del negocio para Cloud Function
           items: orderData.items,
           customer: orderData.customer,
           totalAmount: orderData.totalAmount,
@@ -75,7 +75,7 @@ export class PaymentService {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            businessId: orderData.restaurantId, // Convert restaurantId to businessId for HTTP function
+            businessId: orderData.businessId, // ID del negocio para HTTP function
             items: orderData.items,
             payer: orderData.customer,
             totalAmount: orderData.totalAmount,
@@ -124,7 +124,7 @@ export class PaymentService {
    * @private
    */
   _validateOrderData(orderData) {
-    const required = ['restaurantId', 'items', 'customer', 'totalAmount', 'orderId', 'backUrls'];
+    const required = ['businessId', 'items', 'customer', 'totalAmount', 'orderId', 'backUrls'];
     
     for (const field of required) {
       if (!orderData[field]) {

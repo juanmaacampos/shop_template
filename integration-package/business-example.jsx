@@ -11,8 +11,8 @@ import './MenuComponents.css';
 
 // Componente principal que se adapta al tipo de negocio
 function ModernBusinessPage() {
-  // Usar businessId o restaurantId (ambos funcionan)
-  const businessId = MENU_CONFIG.businessId || MENU_CONFIG.restaurantId;
+  // Usar businessId
+  const businessId = MENU_CONFIG.businessId;
   const menuSDK = createMenuSDK(MENU_CONFIG.firebaseConfig, businessId);
   
   // Hook que incluye terminología dinámica
@@ -123,8 +123,8 @@ function CartSummary({ cart, cartTotal, cartCount, onRemoveItem, terminology }) 
 
 // Ejemplo de compatibilidad hacia atrás
 function LegacyRestaurantPage() {
-  // Código existente que usa restaurantId
-  const menuSDK = createMenuSDK(MENU_CONFIG.firebaseConfig, MENU_CONFIG.restaurantId);
+  // Código actualizado que usa businessId
+  const menuSDK = createMenuSDK(MENU_CONFIG.firebaseConfig, MENU_CONFIG.businessId);
   const { restaurant, menu, loading, error } = useMenu(menuSDK);
   const { cart, addToCart } = useCart();
 

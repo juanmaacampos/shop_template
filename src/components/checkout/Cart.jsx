@@ -31,14 +31,14 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     const initializeOrderService = async () => {
       if (firebaseManager) {
         console.log('✅ Initializing OrderService with Firebase manager');
-        setOrderService(new OrderService(firebaseManager, MENU_CONFIG.businessId || MENU_CONFIG.restaurantId));
+        setOrderService(new OrderService(firebaseManager, MENU_CONFIG.businessId));
       } else {
         // Try to get firebaseManager from global Firebase manager if available
         try {
           const { globalFirebaseManager } = await import('../../cms-menu/firebase-manager.js');
           if (globalFirebaseManager) {
             console.log('✅ Initializing OrderService with global Firebase manager');
-            setOrderService(new OrderService(globalFirebaseManager, MENU_CONFIG.businessId || MENU_CONFIG.restaurantId));
+            setOrderService(new OrderService(globalFirebaseManager, MENU_CONFIG.businessId));
           }
         } catch (error) {
           console.warn('⚠️ Could not initialize OrderService:', error.message);
@@ -59,7 +59,7 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
       // Try to initialize OrderService one more time
       try {
         const { globalFirebaseManager } = await import('../../cms-menu/firebase-manager.js');
-        const tempOrderService = new OrderService(globalFirebaseManager, MENU_CONFIG.businessId || MENU_CONFIG.restaurantId);
+        const tempOrderService = new OrderService(globalFirebaseManager, MENU_CONFIG.businessId);
         setOrderService(tempOrderService);
         
         // Continue with the original order service
@@ -122,7 +122,7 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
 
     // Prepare order data for MercadoPago
     const orderData = {
-      restaurantId: MENU_CONFIG.businessId || MENU_CONFIG.restaurantId,
+      businessId: MENU_CONFIG.businessId,
       items: cart.map(item => ({
         name: item.name,
         unit_price: item.price,

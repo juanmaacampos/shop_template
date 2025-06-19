@@ -16,7 +16,7 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
   const [showCart, setShowCart] = useState(false);
 
   // Use the same SDK instance as App.jsx with terminology support
-  const menuSDK = menuSDKManager.getInstance(MENU_CONFIG.firebaseConfig, MENU_CONFIG.businessId || MENU_CONFIG.restaurantId);
+  const menuSDK = menuSDKManager.getInstance(MENU_CONFIG.firebaseConfig, MENU_CONFIG.businessId);
   const { business, restaurant, menu, loading, error } = useMenuWithTerminology(menuSDK);
 
   // Use store terminology
@@ -65,7 +65,7 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
           showPrices={true}
           showDescription={true}
           terminology={terminology}
-          businessId={MENU_CONFIG.businessId || MENU_CONFIG.restaurantId}
+          businessId={MENU_CONFIG.businessId}
           enableRealTimeStock={true} // 🆕 Habilitar stock en tiempo real
           db={menuSDK?.db} // 🆕 Pasar la conexión a la base de datos
         />

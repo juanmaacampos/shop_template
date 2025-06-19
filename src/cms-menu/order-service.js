@@ -1,9 +1,9 @@
 import { collection, addDoc, doc, updateDoc, getDoc, Timestamp } from 'firebase/firestore';
 
 export class OrderService {
-  constructor(firebaseManager, restaurantId) {
+  constructor(firebaseManager, businessId) {
     this.firebaseManager = firebaseManager;
-    this.restaurantId = restaurantId;
+    this.businessId = businessId;
     
     // Validate Firebase manager on construction
     if (!firebaseManager) {
@@ -45,7 +45,7 @@ export class OrderService {
       const ordersCollection = collection(db, 'orders');
       
       const order = {
-        restaurantId: this.restaurantId,
+        businessId: this.businessId, // ID del negocio para consistencia con Cloud Functions
         items: orderData.items,
         customer: {
           name: orderData.customer.name,

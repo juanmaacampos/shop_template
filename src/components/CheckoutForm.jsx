@@ -10,8 +10,8 @@ import { doc, getDoc, collection, getDocs, setDoc, serverTimestamp } from 'fireb
 import { v4 as uuidv4 } from 'uuid';
 import { MENU_CONFIG } from '../cms-menu/config.js';
 
-// Usar el restaurantId de la configuración centralizada
-const CURRENT_RESTAURANT_ID = MENU_CONFIG.restaurantId;
+// Usar el businessId de la configuración centralizada
+const CURRENT_BUSINESS_ID = MENU_CONFIG.businessId;
 
 const CheckoutForm = () => {
   // Estados del componente
@@ -148,7 +148,7 @@ const CheckoutForm = () => {
       // Procesar según el método de pago seleccionado
       if (selectedPaymentMethod === 'cash') {
         await handleCashPayment(
-          CURRENT_RESTAURANT_ID,
+          CURRENT_BUSINESS_ID,
           cartItems,
           customerInfo,
           totalAmount,
@@ -157,7 +157,7 @@ const CheckoutForm = () => {
         );
       } else if (selectedPaymentMethod === 'mercadopago') {
         await handleMercadoPagoPayment(
-          CURRENT_RESTAURANT_ID,
+          CURRENT_BUSINESS_ID,
           cartItems,
           customerInfo,
           totalAmount,
@@ -177,13 +177,13 @@ const CheckoutForm = () => {
   /**
    * Manejar pago en efectivo
    */
-  const handleCashPayment = async (restaurantId, cartItems, customerInfo, totalAmount, notes, orderId) => {
+  const handleCashPayment = async (businessId, cartItems, customerInfo, totalAmount, notes, orderId) => {
     try {
       console.log('💵 Processing cash payment...');
 
       // Preparar datos del pedido
       const orderData = {
-        restaurantId,
+        businessId: businessId, // ID del negocio
         items: cartItems.map(item => ({
           name: item.name || item.title,
           unit_price: item.price || item.unit_price,
@@ -229,7 +229,7 @@ const CheckoutForm = () => {
   /**
    * Manejar pago con MercadoPago
    */
-  const handleMercadoPagoPayment = async (restaurantId, cartItems, customerInfo, totalAmount, notes, orderId) => {
+  const handleMercadoPagoPayment = async (businessId, cartItems, customerInfo, totalAmount, notes, orderId) => {
     try {
       console.log('💳 Processing MercadoPago payment...');
 
@@ -242,7 +242,7 @@ const CheckoutForm = () => {
 
       // Preparar datos para la Cloud Function
       const paymentData = {
-        restaurantId,
+        businessId,
         items: cartItems.map(item => ({
           name: item.name || item.title,
           unit_price: item.price || item.unit_price,

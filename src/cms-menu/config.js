@@ -18,8 +18,7 @@ export const MENU_CONFIG = {
   // 📝 Obtener ejecutando en consola: firebase.auth().currentUser.uid
   businessId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2",
   
-  // 🔄 Restaurant ID (para compatibilidad con versiones anteriores)
-  restaurantId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2", // Mismo valor que businessId
+
   
   // 💳 MercadoPago Configuration
   // 📝 Obtener desde: https://www.mercadopago.com/developers/panel/app
@@ -130,24 +129,6 @@ export const STORE_TERMINOLOGY = {
 // Usa estas configuraciones como punto de partida
 
 export const BUSINESS_TEMPLATES = {
-  restaurant: {
-    businessName: "Mi Restaurante",
-    menuName: "menú",
-    menuNameCapitalized: "Nuestro Menú",
-    items: "platos",
-    itemsCapitalized: "Platos",
-    addToCart: "Agregar al Pedido",
-    orderSummary: "Tu Pedido",
-    categoriesOfMenu: "Categorías del Menú",
-    featuredProducts: "Platos Destacados",
-    allProducts: "Toda la Carta",
-    serviceOptions: {
-      delivery: "Delivery",
-      pickup: "Retiro en Local",
-      dineIn: "Para Comer Aquí",
-      takeaway: "Para Llevar"
-    }
-  },
   
   store: {
     businessName: "Mi Tienda",
@@ -167,59 +148,6 @@ export const BUSINESS_TEMPLATES = {
     }
   },
   
-  cafe: {
-    businessName: "Mi Café",
-    menuName: "carta",
-    menuNameCapitalized: "Nuestra Carta",
-    items: "bebidas y snacks",
-    itemsCapitalized: "Bebidas y Snacks",
-    addToCart: "Agregar al Pedido",
-    orderSummary: "Tu Pedido",
-    categoriesOfMenu: "Categorías de la Carta",
-    featuredProducts: "Especialidades",
-    allProducts: "Toda la Carta",
-    serviceOptions: {
-      delivery: "Delivery",
-      pickup: "Retiro en Local",
-      dineIn: "Para Tomar Aquí",
-      takeaway: "Para Llevar"
-    }
-  },
-  
-  bakery: {
-    businessName: "Mi Panadería",
-    menuName: "productos",
-    menuNameCapitalized: "Nuestros Productos",
-    items: "productos de panadería",
-    itemsCapitalized: "Productos",
-    addToCart: "Agregar al Pedido",
-    orderSummary: "Tu Pedido",
-    categoriesOfMenu: "Tipos de Productos",
-    featuredProducts: "Especialidades del Día",
-    allProducts: "Todos los Productos",
-    serviceOptions: {
-      delivery: "Envío a Domicilio",
-      pickup: "Retiro en Local",
-      takeaway: "Para Llevar"
-    }
-  },
-  
-  pharmacy: {
-    businessName: "Mi Farmacia",
-    menuName: "catálogo",
-    menuNameCapitalized: "Nuestro Catálogo",
-    items: "productos farmacéuticos",
-    itemsCapitalized: "Productos",
-    addToCart: "Agregar al Carrito",
-    orderSummary: "Carrito de Compras",
-    categoriesOfMenu: "Categorías de Productos",
-    featuredProducts: "Productos Destacados",
-    allProducts: "Todos los Productos",
-    serviceOptions: {
-      delivery: "Envío a Domicilio",
-      pickup: "Retiro en Farmacia"
-    }
-  }
 };
 
 // 🔄 Función para aplicar configuración según tipo de negocio

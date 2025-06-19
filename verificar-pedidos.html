@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Verificación de Pedidos - Debug</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4F46E5;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .loading {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            color: #92400E;
+        }
+        .success {
+            background: #D1FAE5;
+            border-left: 4px solid #10B981;
+            color: #065F46;
+        }
+        .error {
+            background: #FEE2E2;
+            border-left: 4px solid #EF4444;
+            color: #991B1B;
+        }
+        .info {
+            background: #DBEAFE;
+            border-left: 4px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .order-item {
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .order-id {
+            font-family: monospace;
+            font-weight: bold;
+            color: #6366F1;
+        }
+        .summary {
+            background: #F3F4F6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        button {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #4338CA;
+        }
+        button:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+        }
+        .code {
+            background: #1F2937;
+            color: #F9FAFB;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .business-id {
+            font-family: monospace;
+            background: #F3F4F6;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación de Pedidos para tu Business</h1>
+        
+        <div class="info">
+            <strong>Business ID:</strong> <span class="business-id">GLxQFeNBaXO7PFyYnTFlooFgJNl2</span>
+        </div>
+
+        <div id="status" class="status loading">
+            🔄 Inicializando verificación...
+        </div>
+
+        <div id="results"></div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="verificarPedidos()" id="verifyBtn">🔍 Verificar Pedidos</button>
+            <button onclick="crearPedidoPrueba()" id="createBtn">🧪 Crear Pedido de Prueba</button>
+        </div>
+
+        <div class="info">
+            <h3>💡 ¿Qué hace esta verificación?</h3>
+            <ul>
+                <li>✅ Revisa todos los pedidos en tu base de datos Firebase</li>
+                <li>🎯 Filtra los pedidos específicos de tu business ID</li>
+                <li>📊 Muestra un resumen de los resultados</li>
+                <li>🔧 Te ayuda a identificar si el problema está en el CMS o en los datos</li>
+            </ul>
+        </div>
+
+        <div class="summary" id="instructions">
+            <h3>📝 Instrucciones:</h3>
+            <ol>
+                <li><strong>Primero:</strong> Haz clic en "Verificar Pedidos" para ver si hay pedidos guardados</li>
+                <li><strong>Si no hay pedidos:</strong> Haz clic en "Crear Pedido de Prueba" para generar uno</li>
+                <li><strong>Si hay pedidos pero no aparecen en tu CMS:</strong> El problema está en la consulta del CMS</li>
+                <li><strong>Revisa la consola:</strong> Abre F12 para ver detalles técnicos</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getFirestore, collection, query, where, getDocs, addDoc, Timestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHi_a1trI35goPoKcNPUDBMOSLKjvZKyc",
+            authDomain: "cms-menu-7b4a4.firebaseapp.com",
+            projectId: "cms-menu-7b4a4",
+            storageBucket: "cms-menu-7b4a4.firebasestorage.app",
+            messagingSenderId: "509736809578",
+            appId: "1:509736809578:web:15471af092f3b46392c613",
+            measurementId: "G-X4F9XDEL13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const businessId = "GLxQFeNBaXO7PFyYnTFlooFgJNl2";
+
+        // Función para mostrar estado
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = message;
+        }
+
+        // Función para mostrar resultados
+        function showResults(html) {
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Función principal de verificación
+        window.verificarPedidos = async function() {
+            showStatus('🔄 Verificando pedidos en Firebase...', 'loading');
+            showResults('');
+            
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+
+            try {
+                console.log('🔍 Iniciando verificación de pedidos...');
+                
+                // Buscar todos los pedidos
+                const ordersRef = collection(db, 'orders');
+                const allOrders = await getDocs(ordersRef);
+                
+                console.log(`Total de pedidos encontrados: ${allOrders.size}`);
+                
+                let misPedidos = [];
+                let otrosPedidos = 0;
+                
+                allOrders.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.businessId === businessId) {
+                        misPedidos.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    } else {
+                        otrosPedidos++;
+                    }
+                });
+
+                // Mostrar resultados
+                let resultsHtml = `
+                    <div class="summary">
+                        <h3>📊 Resumen de Verificación</h3>
+                        <p><strong>✅ Pedidos de tu business:</strong> ${misPedidos.length}</p>
+                        <p><strong>❌ Pedidos de otros business:</strong> ${otrosPedidos}</p>
+                        <p><strong>📋 Total en la base de datos:</strong> ${allOrders.size}</p>
+                    </div>
+                `;
+
+                if (misPedidos.length > 0) {
+                    showStatus(`✅ ¡Perfecto! Se encontraron ${misPedidos.length} pedidos para tu business`, 'success');
+                    
+                    resultsHtml += '<h3>🎯 Tus Pedidos:</h3>';
+                    misPedidos.forEach(order => {
+                        const fecha = order.createdAt?.toDate?.() || new Date(order.createdAt?.seconds * 1000) || 'Fecha no disponible';
+                        resultsHtml += `
+                            <div class="order-item">
+                                <div class="order-id">Pedido: ${order.id}</div>
+                                <p><strong>Total:</strong> $${order.total || 0} ARS</p>
+                                <p><strong>Estado:</strong> ${order.status || 'No definido'}</p>
+                                <p><strong>Pago:</strong> ${order.paymentStatus || 'No definido'}</p>
+                                <p><strong>Cliente:</strong> ${order.customer?.name || 'No especificado'}</p>
+                                <p><strong>Items:</strong> ${order.items?.length || 0}</p>
+                                <p><strong>Fecha:</strong> ${fecha.toString?.() || fecha}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    resultsHtml += `
+                        <div class="info">
+                            <h4>🎉 ¡Excelente!</h4>
+                            <p>Tus pedidos se están guardando correctamente en Firebase.</p>
+                            <p><strong>Si no los ves en tu CMS:</strong> El problema está en la consulta o filtros del panel de administración.</p>
+                            <p><strong>Revisa que tu CMS:</strong></p>
+                            <ul>
+                                <li>Esté consultando la colección "orders"</li>
+                                <li>Filtre por businessId = "${businessId}"</li>
+                                <li>Tengas los permisos correctos</li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    showStatus('⚠️ No se encontraron pedidos para tu business', 'error');
+                    resultsHtml += `
+                        <div class="error">
+                            <h4>🔍 No hay pedidos para tu business</h4>
+                            <p><strong>Posibles causas:</strong></p>
+                            <ul>
+                                <li>No se han creado pedidos aún</li>
+                                <li>Los pedidos se están guardando con otro businessId</li>
+                                <li>Hay un problema en la configuración</li>
+                            </ul>
+                            <p><strong>Solución:</strong> Haz clic en "Crear Pedido de Prueba" para generar un pedido y verificar que funciona.</p>
+                        </div>
+                    `;
+                }
+
+                showResults(resultsHtml);
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showStatus(`❌ Error al verificar pedidos: ${error.message}`, 'error');
+                showResults(`
+                    <div class="error">
+                        <h4>🚨 Error de Conexión</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Posibles soluciones:</strong></p>
+                        <ul>
+                            <li>Verifica tu conexión a internet</li>
+                            <li>Revisa las reglas de seguridad de Firestore</li>
+                            <li>Asegúrate de que el proyecto de Firebase esté activo</li>
+                        </ul>
+                    </div>
+                `);
+            } finally {
+                verifyBtn.disabled = false;
+            }
+        };
+
+        // Función para crear pedido de prueba
+        window.crearPedidoPrueba = async function() {
+            showStatus('🧪 Creando pedido de prueba...', 'loading');
+            
+            const createBtn = document.getElementById('createBtn');
+            createBtn.disabled = true;
+
+            try {
+                const ordersRef = collection(db, 'orders');
+                
+                const pedidoPrueba = {
+                    businessId: businessId,
+                    items: [
+                        {
+                            name: "Producto de Prueba",
+                            unit_price: 100,
+                            quantity: 2
+                        }
+                    ],
+                    customer: {
+                        name: "Cliente de Prueba",
+                        phone: "+54 9 11 1234-5678",
+                        email: "prueba@ejemplo.com"
+                    },
+                    total: 200,
+                    currency: "ARS",
+                    status: "pending",
+                    paymentStatus: "pending",
+                    paymentMethod: "cash",
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
+                    notes: "Este es un pedido de prueba creado por el script de debugging"
+                };
+
+                const docRef = await addDoc(ordersRef, pedidoPrueba);
+                
+                showStatus(`✅ ¡Pedido de prueba creado exitosamente! ID: ${docRef.id}`, 'success');
+                
+                showResults(`
+                    <div class="success">
+                        <h4>🎉 ¡Pedido de Prueba Creado!</h4>
+                        <p><strong>ID del pedido:</strong> <span class="order-id">${docRef.id}</span></p>
+                        <p><strong>Total:</strong> $200 ARS</p>
+                        <p><strong>Business ID:</strong> ${businessId}</p>
+                        <p>Ahora haz clic en "Verificar Pedidos" para confirmar que aparece en los resultados.</p>
+                    </div>
+                `);
+
+                console.log('✅ Pedido de prueba creado:', docRef.id);
+
+            } catch (error) {
+                console.error('❌ Error creando pedido:', error);
+                showStatus(`❌ Error al crear pedido de prueba: ${error.message}`, 'error');
+            } finally {
+                createBtn.disabled = false;
+            }
+        };
+
+        // Inicialización
+        showStatus('✅ Conectado a Firebase. Listo para verificar pedidos.', 'success');
+        console.log('🚀 Sistema de verificación de pedidos cargado');
+    </script>
+</body>
+</html>
