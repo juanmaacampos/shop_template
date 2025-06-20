@@ -80,8 +80,11 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
       if (selectedPaymentMethod === 'mercadopago') {
         // MercadoPago payment flow
         await handleMercadoPagoPayment(orderId, customerData);
+      } else if (selectedPaymentMethod === 'transfer') {
+        // Transfer payment flow
+        await handleTransferPayment(orderId, customerData);
       } else {
-        // Cash payment flow
+        // Cash payment flow (default)
         await handleCashPayment(orderId, customerData);
       }
       
@@ -108,6 +111,26 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     
     // Show success message for cash payment
     alert(`¡Pedido confirmado! 🎉\n\nID: ${order.orderId}\n\nTe contactaremos por WhatsApp para coordinar el retiro.\n\nTotal a pagar: $${safeTotal.toFixed(2)} ARS`);
+    
+    clearCart();
+    onClose();
+  };
+
+  const handleTransferPayment = async (orderId, customerData) => {
+    // Create order in Firebase with transfer payment
+    const orderData = {
+      items: cart,
+      customer: customerData,
+      total: safeTotal,
+      notes: customerData.notes,
+      paymentMethod: 'transfer'
+    };
+
+    const order = await orderService.createOrder(orderData);
+    console.log('✅ Transfer order created:', order);
+    
+    // Show success message for transfer payment
+    alert(`¡Pedido confirmado! 🎉\n\nID: ${order.orderId}\n\nTe enviaremos los datos bancarios por WhatsApp para realizar la transferencia.\n\nTotal a transferir: $${safeTotal.toFixed(2)} ARS`);
     
     clearCart();
     onClose();

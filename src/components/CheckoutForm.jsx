@@ -164,6 +164,15 @@ const CheckoutForm = () => {
           customerInfo.notes,
           orderId
         );
+      } else if (selectedPaymentMethod === 'transfer') {
+        await handleTransferPayment(
+          CURRENT_BUSINESS_ID,
+          cartItems,
+          customerInfo,
+          totalAmount,
+          customerInfo.notes,
+          orderId
+        );
       }
 
     } catch (error) {
@@ -223,6 +232,58 @@ const CheckoutForm = () => {
     } catch (error) {
       console.error('❌ Error processing cash payment:', error);
       throw new Error('Error al procesar el pago en efectivo');
+    }
+  };
+
+  /**
+   * Manejar pago por transferencia
+   */
+  const handleTransferPayment = async (businessId, cartItems, customerInfo, totalAmount, notes, orderId) => {
+    try {
+      console.log('🏦 Processing transfer payment...');
+
+      // Preparar datos del pedido
+      const orderData = {
+        businessId: businessId, // ID del negocio
+        items: cartItems.map(item => ({
+          name: item.name || item.title,
+          unit_price: item.price || item.unit_price,
+          quantity: item.quantity
+        })),
+        customer: {
+          name: customerInfo.name,
+          phone: customerInfo.phone,
+          email: customerInfo.email || '',
+          address: customerInfo.address || ''
+        },
+        total: totalAmount,
+        paymentMethod: "transfer",
+        status: "pending",
+        paymentStatus: "pending",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        notes: notes || ''
+      };
+
+      // Guardar pedido en Firestore
+      const orderRef = doc(db, 'orders', orderId);
+      await setDoc(orderRef, orderData);
+
+      console.log('✅ Transfer order saved successfully');
+      setFeedbackMessage('¡Pedido confirmado! Te enviaremos los datos bancarios...');
+
+      // Limpiar carrito
+      localStorage.removeItem('cartItems');
+      localStorage.removeItem('cartTotal');
+
+      // Redirigir a página de estado del pedido
+      setTimeout(() => {
+        window.location.href = `/estado-pedido?orderId=${orderId}`;
+      }, 1500);
+
+    } catch (error) {
+      console.error('❌ Error processing transfer payment:', error);
+      throw new Error('Error al procesar el pago por transferencia');
     }
   };
 
@@ -425,6 +486,21 @@ const CheckoutForm = () => {
               <label htmlFor="mercadopago">
                 💳 MercadoPago
                 <span className="payment-description">Tarjeta de débito, crédito o efectivo</span>
+              </label>
+            </div>
+
+            <div className="payment-option">
+              <input
+                type="radio"
+                id="transfer"
+                name="paymentMethod"
+                value="transfer"
+                checked={selectedPaymentMethod === 'transfer'}
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              />
+              <label htmlFor="transfer">
+                🏦 Transferencia Bancaria
+                <span className="payment-description">Te enviaremos los datos bancarios</span>
               </label>
             </div>
           </div>

@@ -141,6 +141,11 @@
   box-shadow: 0 4px 12px rgba(23, 162, 184, 0.15);
 }
 
+.payment-method.transfer:hover {
+  border-color: #6c757d;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.15);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .payment-selection {

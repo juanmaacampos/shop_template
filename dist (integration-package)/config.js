@@ -16,21 +16,7 @@ export const MENU_CONFIG = {
   businessId: "HsuTZWhRVkT88a0WOztELGzJUhl1",
   
   // 🔄 Restaurant ID (para compatibilidad - mismo valor que businessId)
-  restaurantId: "HsuTZWhRVkT88a0WOztELGzJUhl1",
-  
-  // 👁️ Configuración de Items Ocultos
-  itemVisibility: {
-    // Solo items visibles son mostrados a los clientes por defecto
-    hideInvisibleItems: true,
-    
-    // Permitir a administradores ver items ocultos
-    adminCanSeeHidden: true,
-    
-    // Campos de control en Firebase:
-    // - isHidden: boolean (true = oculto del público)
-    // - isAvailable: boolean (false = no disponible)
-    // - stock: number (0 = sin stock, si trackStock es true)
-  }
+  restaurantId: "HsuTZWhRVkT88a0WOztELGzJUhl1"
 };
 
 // Función para obtener el UID del business

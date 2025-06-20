@@ -125,6 +125,9 @@ firebase deploy --only functions
 ### Cash Payment:
 1. User fills form → 2. Saves to Firestore → 3. Redirects to `/estado-pedido?orderId=X`
 
+### Transfer Payment:
+1. User fills form → 2. Saves to Firestore with `paymentMethod: 'transfer'` → 3. Redirects to `/estado-pedido?orderId=X` → 4. Bank details sent to customer
+
 ### MercadoPago:  
 1. User fills form → 2. Calls Cloud Function → 3. Gets `init_point` → 4. Redirects to MercadoPago → 5. After payment, returns to `/estado-pedido?orderId=X`
 

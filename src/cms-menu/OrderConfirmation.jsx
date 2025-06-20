@@ -87,6 +87,8 @@ export function OrderConfirmation() {
               <p>💳 <strong>Pagado con MercadoPago</strong></p>
               <p>Estado del pago: {order.paymentStatus}</p>
             </div>
+          ) : order.paymentMethod === 'transfer' ? (
+            <p>🏦 <strong>A pagar por transferencia</strong></p>
           ) : (
             <p>💵 <strong>A pagar en efectivo</strong></p>
           )}

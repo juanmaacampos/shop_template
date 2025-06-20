@@ -6,7 +6,7 @@ El componente `CheckoutForm` es un formulario de checkout completo para restaura
 
 ## 🚀 Características
 
-- ✅ **Métodos de Pago**: Efectivo y MercadoPago
+- ✅ **Métodos de Pago**: Efectivo, Transferencia y MercadoPago
 - ✅ **Validación de Formulario**: Validación completa de datos del cliente
 - ✅ **Integración Firebase**: Guardado de pedidos en Firestore
 - ✅ **Cloud Functions**: Integración con MercadoPago via Cloud Functions
@@ -102,6 +102,13 @@ export default CheckoutPage;
 2. Se validan los datos
 3. Se guarda el pedido en Firestore
 4. Se redirige a `/estado-pedido?orderId={orderId}`
+
+### Pago por Transferencia:
+1. Usuario completa formulario
+2. Se validan los datos
+3. Se guarda el pedido en Firestore con `paymentMethod: 'transfer'`
+4. Se redirige a `/estado-pedido?orderId={orderId}`
+5. Se envían datos bancarios al cliente
 
 ### Pago con MercadoPago:
 1. Usuario completa formulario

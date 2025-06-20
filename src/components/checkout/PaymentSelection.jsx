@@ -38,6 +38,19 @@ const PaymentSelection = ({ onSelect, onBack, total }) => {
           </div>
           <div className="payment-arrow">→</div>
         </div>
+
+        <div 
+          className="payment-method transfer"
+          onClick={() => onSelect('transfer')}
+        >
+          <div className="payment-icon">🏦</div>
+          <div className="payment-info">
+            <h4>Transferencia</h4>
+            <p>Transferencia bancaria</p>
+            <small>Te enviaremos los datos bancarios</small>
+          </div>
+          <div className="payment-arrow">→</div>
+        </div>
       </div>
 
       <div className="payment-note">

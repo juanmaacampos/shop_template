@@ -250,6 +250,17 @@ export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, men
            (stockValidation && !stockValidation.isValid) ? 'Revisa el stock' : 
            'Confirmar Pedido'}
         </button>
+        
+        {/* Debug info - remover en producción */}
+        {process.env.NODE_ENV === 'development' && (
+          <div style={{ marginTop: '10px', padding: '10px', background: '#f0f0f0', fontSize: '12px' }}>
+            <strong>🐛 Debug Info:</strong><br/>
+            Payment Method: {paymentMethod || 'NOT SELECTED'}<br/>
+            Loading: {loading ? 'YES' : 'NO'}<br/>
+            Stock Valid: {stockValidation ? (stockValidation.isValid ? 'YES' : 'NO') : 'NOT CHECKED'}<br/>
+            Button Disabled: {(!paymentMethod || loading || (stockValidation && !stockValidation.isValid)) ? 'YES' : 'NO'}
+          </div>
+        )}
       </form>
     </div>
   );
