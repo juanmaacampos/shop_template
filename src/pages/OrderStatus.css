@@ -1,7 +1,7 @@
 /* OrderStatus Page Styles - Modern Design */
 .order-status-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--store-accent) 0%, var(--store-secondary) 100%);
   padding: 2rem 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -12,19 +12,17 @@
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Header Styles */
 .order-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--store-accent), var(--store-secondary));
   color: white;
   padding: 2rem;
   text-align: center;
   position: relative;
-  overflow: hidden;
 }
 
 .order-header::before {
@@ -219,7 +217,7 @@
 
 .item-price {
   font-weight: 600;
-  color: #28a745;
+  color: #000000;
 }
 
 /* Customer Info */
@@ -293,14 +291,14 @@
 }
 
 .btn-primary {
-  background: #667eea;
+  background: var(--store-accent);
   color: white;
 }
 
 .btn-primary:hover {
-  background: #5a67d8;
+  background: var(--store-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(78, 128, 152, 0.4);
 }
 
 .btn-secondary {

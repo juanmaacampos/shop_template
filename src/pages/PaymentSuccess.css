@@ -10,12 +10,12 @@
 
 .success-icon {
   font-size: 4rem;
-  color: #28a745;
+  color: #00A9A5; /* Using turquoise */
   margin-bottom: 1rem;
 }
 
 .success-title {
-  color: #28a745;
+  color: #00A9A5; /* Using turquoise */
   font-size: 2rem;
   margin-bottom: 1rem;
 }
@@ -58,7 +58,7 @@
 .order-info-item:last-child {
   border-bottom: none;
   font-weight: bold;
-  color: #28a745;
+  color: #00A9A5; /* Using turquoise */
 }
 
 .order-items {
@@ -106,12 +106,12 @@
 }
 
 .btn-primary {
-  background: #007bff;
+  background: #00A9A5; /* Using turquoise */
   color: white;
 }
 
 .btn-primary:hover {
-  background: #0056b3;
+  background: #4E8098; /* Using Air Force blue */
   transform: translateY(-2px);
 }
 

@@ -1,5 +1,5 @@
 .footer {
-  background: var(--gray);
+  background: var(--store-primary);
   padding: 3rem 0 1rem;
   margin-bottom: 80px;
 }
@@ -16,7 +16,7 @@
   font-family: var(--font-primary);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-yellow);
+  color: var(--store-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -49,9 +49,9 @@
 }
 
 .social-link:hover {
-  color: var(--primary-yellow);
+  color: var(--store-secondary);
   transform: translateY(-2px);
-  background: rgba(255, 215, 0, 0.1);
+  background: rgba(0, 169, 165, 0.1);
 }
 
 .footer-contact p {

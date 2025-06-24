@@ -73,17 +73,17 @@
 
 /* Estados del stock - Badge Style con colores */
 .stock-in-stock {
-  background: #00A9A5 !important; /* Using our turquoise */
+  background: #28a745 !important;
   color: white !important;
 }
 
 .stock-low-stock {
-  background: #4E8098 !important; /* Using Air Force blue for warnings */
-  color: white !important;
+  background: #ffc107 !important;
+  color: #212529 !important;
 }
 
 .stock-out-of-stock {
-  background: #092327 !important; /* Using Gunmetal for out of stock */
+  background: #dc3545 !important;
   color: white !important;
 }
 
@@ -93,8 +93,8 @@
 }
 
 .stock-not-tracked {
-  background: #90C2E7 !important; /* Using Light Sky Blue */
-  color: #092327 !important; /* Dark text on light background */
+  background: #17a2b8 !important;
+  color: white !important;
 }
 
 .stock-unknown {
@@ -128,7 +128,7 @@
 
 .stock-summary__realtime {
   font-size: 0.875rem;
-  color: #00A9A5; /* Using turquoise */
+  color: #17a2b8;
   font-weight: 500;
   animation: realtime-pulse 2s infinite;
 }

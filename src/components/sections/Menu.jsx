@@ -5,6 +5,7 @@ import { MenuDisplay } from '../../cms-menu/MenuComponents.jsx';
 import { useMenuWithTerminology } from '../../cms-menu/useMenu.js';
 import { MENU_CONFIG, STORE_TERMINOLOGY } from '../../cms-menu/config.js';
 import { menuSDKManager } from '../../cms-menu/menu-sdk-singleton.js';
+import CategorySlider from '../ui/CategorySlider';
 import Cart from '../checkout/Cart';
 import '../../styles/sections/Menu.css';
 
@@ -14,6 +15,7 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
   const menuRef = useRef(null);
   const titleRef = useRef(null);
   const [showCart, setShowCart] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Use the same SDK instance as App.jsx with terminology support
   const menuSDK = menuSDKManager.getInstance(MENU_CONFIG.firebaseConfig, MENU_CONFIG.businessId);
@@ -21,6 +23,15 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
 
   // Use store terminology
   const terminology = STORE_TERMINOLOGY;
+
+  const handleCategorySelect = (categoryName) => {
+    setSelectedCategory(categoryName);
+  };
+
+  // Filtrar el menú por categoría seleccionada
+  const filteredMenu = selectedCategory && menu 
+    ? menu.filter(category => category.name.toLowerCase() === selectedCategory.toLowerCase())
+    : menu;
 
   useEffect(() => {
     gsap.fromTo(titleRef.current,
@@ -56,8 +67,30 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
           )}
         </div>
         
+        {/* Category Slider */}
+        <CategorySlider 
+          menu={menu}
+          onCategorySelect={handleCategorySelect}
+          selectedCategory={selectedCategory}
+        />
+
+        {/* Category Filter Status */}
+        {selectedCategory && (
+          <div className="category-filter-status">
+            <span className="filter-text">
+              Mostrando: <strong>{selectedCategory}</strong>
+            </span>
+            <button 
+              className="clear-filter-btn"
+              onClick={() => setSelectedCategory(null)}
+            >
+              Ver todas las categorías
+            </button>
+          </div>
+        )}
+        
         <MenuDisplay 
-          menu={menu} 
+          menu={filteredMenu} 
           loading={loading}
           error={error}
           onAddToCart={addToCart}

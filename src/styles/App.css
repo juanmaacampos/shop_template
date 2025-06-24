@@ -5,14 +5,14 @@
 }
 
 :root {
-  --primary-yellow: #FFD700;
-  --store-primary: #4F46E5; /* Indigo for digital store */
-  --store-secondary: #10B981; /* Emerald for actions */
-  --store-accent: #F59E0B; /* Amber for highlights */
-  --dark-bg: #0A0A0A;
+  --primary-yellow: #90C2E7; /* Light Sky Blue - main accent */
+  --store-primary: #092327; /* Gunmetal - main dark */
+  --store-secondary: #00A9A5; /* Light sea green - accent actions */
+  --store-accent: #4E8098; /* Air Force blue - highlights */
+  --dark-bg: #0B5351; /* Dark slate gray - background */
   --white: #FFFFFF;
-  --gray: #333333;
-  --light-gray: #666666;
+  --gray: #4E8098; /* Air Force blue for grays */
+  --light-gray: #90C2E7; /* Light sky blue for light text */
   --font-primary: 'Geologica', sans-serif;
   --font-script: 'Pacifico', cursive;
 }
@@ -22,14 +22,12 @@ body {
   background-color: var(--dark-bg);
   color: var(--white);
   line-height: 1.6;
-  overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
   position: relative;
 }
 
 .App {
-  overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
   position: relative;
@@ -40,7 +38,6 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
   width: 100%;
-  overflow-x: hidden;
 }
 
 .section {
@@ -48,7 +45,6 @@ body {
   padding: 2rem 0;
   position: relative;
   width: 100%;
-  overflow-x: hidden;
 }
 
 .section-title {
@@ -56,11 +52,11 @@ body {
   font-weight: 700;
   text-align: center;
   margin-bottom: 3rem;
-  color: var(--primary-yellow);
+  color: var(--store-secondary); /* Changed from primary-yellow to store-secondary (turquoise) */
 }
 
 .btn-primary {
-  background: var(--store-primary);
+  background: var(--store-secondary); /* Using turquoise for primary buttons */
   color: var(--white);
   border: none;
   padding: 1rem 2rem;
@@ -75,9 +71,9 @@ body {
 }
 
 .btn-primary:hover {
-  background: #3730A3;
+  background: var(--store-accent); /* Air Force blue on hover */
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 169, 165, 0.3); /* Turquoise shadow */
 }
 
 .fade-in {
@@ -191,7 +187,7 @@ body {
 
 /* Store-specific styles */
 .store-catalog {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--dark-bg) 0%, var(--store-primary) 100%);
   min-height: 100vh;
 }
 
@@ -210,11 +206,11 @@ body {
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 169, 165, 0.3);
 }
 
 .store-cart-btn:hover {
-  background: #059669;
+  background: var(--store-accent);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 169, 165, 0.4);
 }

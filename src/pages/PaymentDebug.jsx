@@ -29,7 +29,7 @@ const PaymentDebug = () => {
       </p>
       
       <h2>URL Parameters:</h2>
-      <pre style={{backgroundColor: '#e9ecef', padding: '1rem', overflow: 'auto'}}>
+      <pre style={{backgroundColor: '#e9ecef', padding: '1rem'}}>
         {JSON.stringify(allParams, null, 2)}
       </pre>
       

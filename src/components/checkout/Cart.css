@@ -39,7 +39,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-left: 4px solid #4F46E5;
+  border-left: 4px solid var(--store-secondary);
 }
 
 .cart-header {
@@ -48,7 +48,7 @@
   align-items: center;
   padding: 1rem;
   border-bottom: 1px solid #eee;
-  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+  background: linear-gradient(135deg, var(--store-secondary), var(--store-accent));
   color: white;
 }
 

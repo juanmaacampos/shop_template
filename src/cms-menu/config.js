@@ -16,7 +16,7 @@ export const MENU_CONFIG = {
   
   // 🆔 Business/Restaurant ID (UID del propietario en Firebase Auth)
   // 📝 Obtener ejecutando en consola: firebase.auth().currentUser.uid
-  businessId: "GLxQFeNBaXO7PFyYnTFlooFgJNl2",
+  businessId: "OANNHilb2kZOVQKx7fb80hPrAL92",
   
   // 👁️ Configuración de Visibilidad de Items
   itemVisibility: {

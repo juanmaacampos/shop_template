@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMenu, useCart } from './useMenu.js';
+import { useRealTimeStock } from './useRealTimeStock.js';
+import { StockIndicator } from './StockIndicator.jsx';
+import { getFirestore } from 'firebase/firestore';
 import './MenuComponents.css';
+import './StockIndicator.css';
 
 // Funciones helper para manejo de stock
 function getStockClass(item) {
   if (!item.trackStock) return 'stock-unlimited';
-  if (item.stock <= 0 || item.isAvailable === false) return 'stock-out';
-  if (item.stock <= 5) return 'stock-low';
-  return 'stock-normal';
+  if (item.stock <= 0 || item.isAvailable === false) return 'stock-out-of-stock';
+  if (item.stock <= 5) return 'stock-low-stock';
+  return 'stock-in-stock';
 }
 
 function getStockIcon(item) {
-  if (!item.trackStock) return '∞';
-  if (item.stock <= 0 || item.isAvailable === false) return '❌';
-  if (item.stock <= 5) return '⚠️';
-  return '✅';
+  if (!item.trackStock) return '✓';
+  if (item.stock <= 0 || item.isAvailable === false) return '✕';
+  if (item.stock <= 5) return '⚠';
+  return '✓';
 }
 
 function getStockText(item) {
-  if (!item.trackStock) return 'Ilimitado';
+  if (!item.trackStock) return 'Disponible';
   if (item.stock <= 0 || item.isAvailable === false) return 'Sin stock';
-  if (item.stock <= 5) return `${item.stock} (Últimas unidades)`;
-  return `${item.stock} disponibles`;
+  if (item.stock <= 5) return 'Stock limitado';
+  return 'En stock';
 }
 
 function isItemAvailable(item) {
@@ -173,15 +177,43 @@ export function MenuItem({
   showImage = true, 
   showPrice = true, 
   showDescription = true,
-  terminology = {}
+  terminology = {},
+  businessId = null,
+  categoryId = null,
+  enableRealTimeStock = false,
+  db = null // Nueva prop para la conexión a Firestore
 }) {
+  const imageSource = item.imageUrl || item.image;
+  
+  // Hook para stock en tiempo real si está habilitado
+  const stockEnabled = enableRealTimeStock && businessId && categoryId && item.trackStock && db;
+  const productIds = stockEnabled ? [{ id: item.id, categoryId }] : [];
+  
+  const {
+    stockData,
+    isRealTimeActive,
+    getStockStatus,
+    getProductStock,
+    isProductAvailable,
+    lastUpdated
+  } = useRealTimeStock(productIds, businessId, stockEnabled, db);
+  
+  // Usar datos de stock en tiempo real si están disponibles, sino usar datos del item
+  const currentStock = stockEnabled ? getProductStock(item.id) : (item.stock || 0);
+  const currentAvailable = stockEnabled ? isProductAvailable(item.id) : (item.isAvailable !== false);
+  const stockStatus = stockEnabled ? getStockStatus(item.id) : 
+    (!item.trackStock ? 'not-tracked' : 
+     (!item.isAvailable ? 'unavailable' : 
+      (item.stock <= 0 ? 'out-of-stock' : 
+       (item.stock <= 5 ? 'low-stock' : 'in-stock'))));
+
   return (
-    <div className="menu-item">
+    <div className={`menu-item ${item.isHidden ? 'hidden' : ''}`}>
       {showImage && (
         <ImageWithFallback 
-          src={item.imageUrl} 
+          src={imageSource} 
           alt={item.name} 
-          className="item-image"
+          className="cms-item-image"
         />
       )}
       
@@ -191,25 +223,38 @@ export function MenuItem({
           {showPrice && <span className="item-price">${item.price}</span>}
         </div>
         
-        {showDescription && item.description && (
+        {showDescription && item.description && false && (
           <p className="item-description">{item.description}</p>
         )}
         
         <div className="item-tags">
-          {item.isFeatured && <span className="tag featured">⭐ Destacado</span>}
-          {!item.isAvailable && <span className="tag unavailable">No disponible</span>}
-          {item.trackStock && typeof item.stock === 'number' && (
-            <span className={`tag stock ${getStockClass(item)}`}>
-              {getStockIcon(item)} Stock: {getStockText(item)}
+          {item.isHidden && <span className="tag hidden">👁️‍🗨️ Oculto</span>}
+          {!currentAvailable && !item.isHidden && <span className="tag unavailable">No disponible</span>}
+          
+          {/* Tags de stock como badges simples */}
+          {item.trackStock && (
+            <span className={`tag stock stock-${stockStatus}`}>
+              {stockStatus === 'in-stock' && 'En stock'}
+              {stockStatus === 'low-stock' && 'Poco stock'}
+              {stockStatus === 'out-of-stock' && 'Sin stock'}
+              {stockStatus === 'unavailable' && 'No disponible'}
+              {stockStatus === 'not-tracked' && 'Disponible'}
+            </span>
+          )}
+          
+          {/* Badge para items sin seguimiento de stock pero disponibles */}
+          {!item.trackStock && currentAvailable && !item.isHidden && (
+            <span className="tag stock stock-unlimited">
+              Disponible
             </span>
           )}
         </div>
         
         {onAddToCart && (
           <button 
-            className={`add-button ${getButtonClass(item)}`}
-            onClick={() => onAddToCart(item)}
-            disabled={!isItemAvailable(item)}
+            className={getButtonClass(item)}
+            onClick={() => !item.isHidden && onAddToCart(item)}
+            disabled={item.isHidden || !currentAvailable || (item.trackStock && currentStock <= 0)}
           >
             {getButtonText(item, terminology)}
           </button>

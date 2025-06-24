@@ -3,6 +3,7 @@ import { useMenu, useCart } from './useMenu.js';
 import { useRealTimeStock } from './useRealTimeStock.js';
 import { StockIndicator } from './StockIndicator.jsx';
 import { getFirestore } from 'firebase/firestore';
+import ProductCard from '../components/ui/ProductCard.jsx';
 import './MenuComponents.css';
 import './StockIndicator.css';
 
@@ -160,7 +161,7 @@ export function MenuDisplay({
   );
 }
 
-// Componente individual del item
+// Componente individual del item usando ProductCard
 export function MenuItem({ 
   item, 
   onAddToCart, 
@@ -173,8 +174,6 @@ export function MenuItem({
   enableRealTimeStock = false,
   db = null // Nueva prop para la conexión a Firestore
 }) {
-  const imageSource = item.imageUrl || item.image;
-  
   // Hook para stock en tiempo real si está habilitado
   const stockEnabled = enableRealTimeStock && businessId && categoryId && item.trackStock && db;
   const productIds = stockEnabled ? [{ id: item.id, categoryId }] : [];
@@ -188,66 +187,26 @@ export function MenuItem({
     lastUpdated
   } = useRealTimeStock(productIds, businessId, stockEnabled, db);
   
-  // Usar datos de stock en tiempo real si están disponibles, sino usar datos del item
-  const currentStock = stockEnabled ? getProductStock(item.id) : (item.stock || 0);
-  const currentAvailable = stockEnabled ? isProductAvailable(item.id) : (item.isAvailable !== false);
-  const stockStatus = stockEnabled ? getStockStatus(item.id) : 
-    (!item.trackStock ? 'not-tracked' : 
-     (!item.isAvailable ? 'unavailable' : 
-      (item.stock <= 0 ? 'out-of-stock' : 
-       (item.stock <= 5 ? 'low-stock' : 'in-stock'))));
+  // Crear un item mejorado con datos de stock en tiempo real si están disponibles
+  const enhancedItem = {
+    ...item,
+    stock: stockEnabled ? getProductStock(item.id) : (item.stock || 0),
+    isAvailable: stockEnabled ? isProductAvailable(item.id) : (item.isAvailable !== false)
+  };
 
   return (
-    <div className={`menu-item ${item.isHidden ? 'hidden' : ''}`}>
-      {showImage && (
-        <ImageWithFallback 
-          src={imageSource} 
-          alt={item.name} 
-          className="cms-item-image"
-        />
-      )}
-      
-      <div className="item-content">
-        <div className="item-header">
-          <h3 className="item-name">{item.name}</h3>
-          {showPrice && <span className="item-price">${item.price}</span>}
-        </div>
-        
-        {showDescription && item.description && (
-          <p className="item-description">{item.description}</p>
-        )}
-        
-        <div className="item-tags">
-          {item.isFeatured && <span className="tag featured">⭐ Destacado</span>}
-          {item.isHidden && <span className="tag hidden">👁️‍🗨️ Oculto</span>}
-          {!currentAvailable && !item.isHidden && <span className="tag unavailable">No disponible</span>}
-        </div>
-        
-        {/* Indicador de stock en tiempo real */}
-        {item.trackStock && (
-          <StockIndicator
-            stock={currentStock}
-            isAvailable={currentAvailable}
-            trackStock={item.trackStock}
-            status={stockStatus}
-            showText={true}
-            size="small"
-            isRealTime={isRealTimeActive && stockEnabled}
-            lastUpdated={stockEnabled ? lastUpdated : null}
-          />
-        )}
-        
-        {onAddToCart && (
-          <button 
-            className={getButtonClass(item)}
-            onClick={() => !item.isHidden && onAddToCart(item)}
-            disabled={item.isHidden || !currentAvailable || (item.trackStock && currentStock <= 0)}
-          >
-            {getButtonText(item, terminology)}
-          </button>
-        )}
-      </div>
-    </div>
+    <ProductCard
+      item={enhancedItem}
+      onAddToCart={onAddToCart}
+      showImage={showImage}
+      showPrice={showPrice}
+      showDescription={showDescription}
+      terminology={terminology}
+      businessId={businessId}
+      categoryId={categoryId}
+      enableRealTimeStock={enableRealTimeStock}
+      db={db}
+    />
   );
 }
 

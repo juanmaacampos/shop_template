@@ -7,6 +7,7 @@ import PaymentFailure from './pages/PaymentFailure.jsx';
 import OrderStatus from './pages/OrderStatus.jsx';
 import WebhookHandler from './pages/WebhookHandler.jsx';
 import PaymentDebugInfo from './pages/PaymentDebugInfo.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
 // import PaymentDebug from './pages/PaymentDebug.jsx';
 
 const Router = () => {
@@ -15,6 +16,9 @@ const Router = () => {
       <Routes>
         {/* Ruta principal del restaurante */}
         <Route path="/" element={<App />} />
+        
+        {/* Ruta de detalle de producto */}
+        <Route path="/producto/:productId" element={<ProductDetail />} />
         
         {/* Rutas de estado de pago de MercadoPago */}
         <Route path="/payment/success" element={<PaymentSuccess />} />
