@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, query, orderBy } from 'firebase/fires
 import { ref, getDownloadURL } from 'firebase/storage';
 import { globalFirebaseManager } from './firebase-manager.js';
 import { OrderService } from './order-service.js';
+import { FaUtensils } from 'react-icons/fa';
 
 export class MenuSDK {
   constructor(firebaseConfig, businessId) {
@@ -54,7 +55,7 @@ export class MenuSDK {
       await this._ensureInitialized();
       
       if (!this.storage) {
-        console.error('❌ Firebase Storage not initialized');
+        console.error('Firebase Storage not initialized');
         return null;
       }
       
@@ -64,7 +65,7 @@ export class MenuSDK {
       
       return downloadURL;
     } catch (error) {
-      console.error('❌ Failed to resolve image URL:', {
+      console.error('Failed to resolve image URL:', {
         path: imagePath,
         error: error.message
       });
@@ -96,7 +97,7 @@ export class MenuSDK {
       const restaurantDoc = await getDoc(restaurantRef);
       
       if (restaurantDoc.exists()) {
-        console.log('✅ Business info loaded from restaurants collection (compatibility mode)');
+        console.log('✅ Business info loaded from restaurants collection (compatibilidad)');
         const data = restaurantDoc.data();
         // Agregar businessType por defecto si no existe
         return {
@@ -151,7 +152,7 @@ export class MenuSDK {
     try {
       await this._ensureInitialized();
       
-      console.log('🍽️ Fetching full menu for business:', this.businessId);
+      console.log('[Menu] Fetching full menu for business:', this.businessId);
       
       // Intentar con la nueva estructura businesses
       let categoriesRef = collection(this.db, 'businesses', this.businessId, 'menu');

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaStore } from 'react-icons/fa';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -90,12 +90,12 @@ const CategorySlider = ({ menu = [], onCategorySelect, selectedCategory = null }
                   />
                 ) : (
                   <div className="category-image-placeholder" style={{ display: 'flex' }}>
-                    <span className="category-icon">🏪</span>
+                    <span className="category-icon"><FaStore /></span>
                   </div>
                 )}
                 {category.image && (
                   <div className="category-image-placeholder" style={{ display: 'none' }}>
-                    <span className="category-icon">🏪</span>
+                    <span className="category-icon"><FaStore /></span>
                   </div>
                 )}
                 <div className="category-overlay">

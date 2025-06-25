@@ -214,3 +214,26 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 169, 165, 0.4);
 }
+
+.catalog-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--white);
+  text-align: center;
+  gap: 1rem;
+  margin: 0 auto;
+  padding: 2rem 0 1.5rem 0;
+  box-shadow: none;
+  background: transparent;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .catalog-title {
+    font-size: 2rem;
+    padding: 1.5rem 0 1rem 0;
+  }
+}

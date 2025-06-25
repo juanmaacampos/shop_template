@@ -1,6 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef } from 'react';
 import { FaMapMarkerAlt, FaClock, FaPhone, FaInstagram } from 'react-icons/fa';
 import '../../styles/sections/Location.css';
 
@@ -10,51 +8,17 @@ const Location = () => {
   const infoRef = useRef(null);
   const mapRef = useRef(null);
 
-  useEffect(() => {
-    // Register ScrollTrigger plugin
-    gsap.registerPlugin(ScrollTrigger);
-    
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: locationRef.current,
-        start: "top 70%",
-        end: "bottom 30%",
-        toggleActions: "play none none reverse"
-      }
-    });
-
-    tl.fromTo(titleRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1 }
-    )
-    .fromTo(infoRef.current,
-      { opacity: 0, x: -50 },
-      { opacity: 1, x: 0, duration: 0.8 },
-      "-=0.5"
-    )
-    .fromTo(mapRef.current,
-      { opacity: 0, x: 50 },
-      { opacity: 1, x: 0, duration: 0.8 },
-      "-=0.8"
-    );
-
-    // Cleanup function
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
-
   return (
     <section ref={locationRef} className="location section" id="location">
       <div className="container">
-        <h2 ref={titleRef} className="section-title">Find Us</h2>
+        <h2 ref={titleRef} className="section-title">Encontranos:</h2>
         
         <div className="location-content">
           <div ref={infoRef} className="location-info">
             <div className="info-item">
               <FaMapMarkerAlt className="info-icon" />
               <div>
-                <h3>Address</h3>
+                <h3>Dirección</h3>
                 <p>123 Main Street<br />Downtown, City</p>
               </div>
             </div>
@@ -62,16 +26,16 @@ const Location = () => {
             <div className="info-item">
               <FaClock className="info-icon" />
               <div>
-                <h3>Hours</h3>
-                <p>Monday to Sunday<br />11:00 AM - 11:00 PM</p>
+                <h3>Horarios</h3>
+                <p>Lunes a domingo<br />11:00 AM - 11:00 PM</p>
               </div>
             </div>
             
             <div className="info-item">
               <FaPhone className="info-icon" />
               <div>
-                <h3>Contact</h3>
-                <p>+1 (555) 123-4567</p>
+                <h3>Contacto</h3>
+                <p>+54 11 1123-4567</p>
               </div>
             </div>
             
@@ -84,22 +48,17 @@ const Location = () => {
             </div>
           </div>
           
-          <div ref={mapRef} className="location-map">
-            <div className="map-container">
-              <div className="map-info">
-                <FaMapMarkerAlt className="map-icon" />
-                <h3>Nuestra Ubicación</h3>
-                <p>Av. Principal 123<br />Barrio Centro, Ciudad<br />Bogotá, Colombia</p>
-                <a 
-                  href="https://maps.google.com/?q=4.6243,-74.0599" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="map-link"
-                >
-                  <FaMapMarkerAlt /> Ver en Google Maps
-                </a>
-              </div>
-            </div>
+          <div ref={mapRef} className="location-map" style={{ width: '100%', height: '100%' }}>
+            <iframe
+              title="Ubicación en Google Maps"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d105558.2618251795!2d-58.955988950000005!3d-34.23078795!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bb723060430bad%3A0xaa31c9f685c849bf!2sCampana%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1750823038951!5m2!1ses-419!2sar"
+              width="100%"
+              height="400"
+              style={{ border: 0, width: '100%', height: 400 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
       </div>

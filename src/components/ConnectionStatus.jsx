@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMenu } from '../context/MenuContext';
+import { FaSyncAlt, FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 
 export const ConnectionStatus = () => {
   const { isConnected, isLoading, error } = useMenu();
@@ -17,7 +18,7 @@ export const ConnectionStatus = () => {
         fontSize: '12px',
         zIndex: 1000
       }}>
-        🔄 Conectando a Firebase...
+        <FaSyncAlt style={{ marginRight: 6 }} /> Conectando a Firebase...
       </div>
     );
   }
@@ -35,7 +36,7 @@ export const ConnectionStatus = () => {
         fontSize: '12px',
         zIndex: 1000
       }}>
-        ❌ Error: {error}
+        <FaTimesCircle style={{ marginRight: 6 }} /> Error: {error}
       </div>
     );
   }
@@ -53,7 +54,7 @@ export const ConnectionStatus = () => {
         fontSize: '12px',
         zIndex: 1000
       }}>
-        ✅ Conectado a Firebase
+        <FaCheckCircle style={{ marginRight: 6 }} /> Conectado a Firebase
       </div>
     );
   }

@@ -1,0 +1,201 @@
+.navbar-modern {
+  background: #0f232a;
+  color: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1200;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Centra y distribuye responsivamente los elementos de la navbar */
+.navbar-modern-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  gap: 2rem;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.navbar-modern-logo {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #14b8a6;
+  text-decoration: none;
+  transition: color 0.2s;
+  margin-right: 2.5rem;
+}
+.navbar-modern-logo:hover {
+  color: #2dd4bf;
+}
+.navbar-modern-logo-icon {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+
+.navbar-modern-menu {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0%;
+  justify-content: center;
+  gap: 2.5rem;
+}
+
+.navbar-modern-link {
+  display: flex;
+  align-items: center;
+  color: #cbd5e1;
+  background: #1e293b;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.08rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  margin: 0 0.25rem;
+}
+.navbar-modern-link:hover {
+  color: #fff;
+  background: #334155;
+}
+.navbar-modern-link-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.navbar-modern-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 2.5rem;
+}
+
+.navbar-modern-search-desktop {
+  display: block;
+  min-width: 260px;
+  max-width: 340px;
+}
+
+.navbar-modern-cart {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg,#14b8a6,#38bdf8);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px 0 rgba(20,184,166,0.13);
+  position: relative;
+  transition: background 0.2s;
+}
+.navbar-modern-cart:hover {
+  background: linear-gradient(90deg,#0ea5e9,#14b8a6);
+}
+.navbar-modern-cart-icon {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+.navbar-modern-cart-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #fff;
+  color: #14b8a6;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 2px solid #14b8a6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+}
+
+.navbar-modern-mobile-btn {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  display: none;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+}
+.navbar-modern-mobile-icon {
+  font-size: 2rem;
+}
+
+/* Mobile menu */
+.navbar-modern-mobile-menu {
+  background: #1e293b;
+  padding: 1rem 2rem 1.5rem 2rem;
+  border-bottom-left-radius: 1.2rem;
+  border-bottom-right-radius: 1.2rem;
+  box-shadow: 0 8px 32px 0 rgba(20,184,166,0.10);
+}
+.navbar-modern-search-mobile {
+  margin-bottom: 1rem;
+}
+.navbar-modern-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  .navbar-modern-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-height: unset;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+  }
+  .navbar-modern-logo {
+    justify-content: center;
+    margin: 0 0 0.5rem 0;
+  }
+  .navbar-modern-actions {
+    margin: 0;
+    justify-content: center;
+  }
+  .navbar-modern-menu {
+    display: none;
+  }
+  .navbar-modern-search-desktop {
+    display: none;
+  }
+  .navbar-modern-mobile-btn {
+    display: flex;
+  }
+}
+@media (max-width: 600px) {
+  .navbar-modern-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+    padding: 0 0.2rem;
+  }
+  .navbar-modern-logo {
+    font-size: 1.1rem;
+    margin: 0 0 0.3rem 0;
+  }
+  .navbar-modern-actions {
+    gap: 0.7rem;
+  }
+  .navbar-modern-menu {
+    gap: 0.7rem;
+  }
+}

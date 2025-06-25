@@ -3,7 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useMenu as useMenuContext } from '../context/MenuContext.jsx';
 import { useCart } from '../cms-menu/useMenu.js';
 import { StockIndicator } from '../cms-menu/StockIndicator.jsx';
-import { FaShoppingCart } from 'react-icons/fa';
+import { 
+  FaShoppingCart, FaUtensils, FaCheck, FaExclamationTriangle, FaTimes, FaInfinity, FaStar, FaTruck, FaLock, FaCreditCard, FaSpinner
+} from 'react-icons/fa';
+import { Navbar } from '../components/navigation';
+import Cart from '../components/checkout/Cart';
 import './ProductDetail.css';
 
 // Componente para productos sugeridos
@@ -54,7 +58,7 @@ const SuggestedProducts = ({ currentProduct, menu, onProductClick }) => {
                   alt={product.name}
                 />
               ) : (
-                <div className="suggested-product-placeholder">🍽️</div>
+                <div className="suggested-product-placeholder"><FaUtensils /></div>
               )}
             </div>
             <div className="suggested-product-info">
@@ -65,12 +69,12 @@ const SuggestedProducts = ({ currentProduct, menu, onProductClick }) => {
               </div>
               {product.trackStock && product.stock <= 5 && product.stock > 0 && (
                 <div className="suggested-stock-warning">
-                  ⚠️ Últimas {product.stock} unidades
+                  <FaExclamationTriangle style={{color:'#ffc107', marginRight:4}} /> Últimas {product.stock} unidades
                 </div>
               )}
               {product.trackStock && product.stock <= 0 && (
                 <div className="suggested-out-of-stock">
-                  ❌ Sin stock
+                  <FaTimes style={{color:'#dc3545', marginRight:4}} /> Sin stock
                 </div>
               )}
             </div>
@@ -85,12 +89,13 @@ const ProductDetail = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { menu, isLoading: menuLoading, error: menuError } = useMenuContext();
-  const { addToCart, cartCount } = useCart();
+  const { addToCart, cartCount, cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
     if (menu && !menuLoading) {
@@ -165,19 +170,23 @@ const ProductDetail = () => {
     return true;
   };
 
-  if (menuLoading || isTransitioning) {
-    return (
-      <div className="product-detail-loading">
-        <div className="loading-spinner">🔄</div>
-        <p>Cargando producto...</p>
-      </div>
-    );
-  }
+  const handleCartClick = () => setShowCart(true);
+
+  // --- LOADING/ERROR STATES ---
+  // Eliminada pantalla de carga entre páginas
+  // if (menuLoading || isTransitioning) {
+  //   return (
+  //     <div className="product-detail-loading">
+  //       <div className="loading-spinner"><FaSpinner className="fa-spin" /></div>
+  //       <p>Cargando producto...</p>
+  //     </div>
+  //   );
+  // }
 
   if (menuError || !product) {
     return (
       <div className="product-detail-error">
-        <div className="error-icon">❌</div>
+        <div className="error-icon"><FaTimes /></div>
         <h2>Producto no encontrado</h2>
         <p>El producto que buscas no existe o no está disponible.</p>
         <Link to="/" className="btn btn-primary">
@@ -191,29 +200,22 @@ const ProductDetail = () => {
   const images = product.images || (product.imageUrl || product.image ? [product.imageUrl || product.image] : []);
 
   return (
-    <div className="product-detail-page">
-      {/* Barra de navegación superior */}
-      <div className="product-nav-bar">
-        <div className="nav-container">
-          <button 
-            className="back-button"
-            onClick={() => navigate('/')}
-          >
-            ← Volver al catálogo
-          </button>
-          <Link to="/" className="home-link">
-            🏪 Digital Store
-          </Link>
-          
-          {/* Indicador del carrito */}
-          {cartCount > 0 && (
-            <div className="cart-indicator">
-              <FaShoppingCart />
-              <span className="cart-count">{cartCount}</span>
-            </div>
-          )}
+    <div className="product-detail-page" style={{ paddingTop: '80px' }}>
+      {/* Navbar principal reutilizada */}
+      <Navbar onCartClick={handleCartClick} itemCount={cartCount || 0} hideNavLinks />
+      {/* Overlay del carrito igual que en App.jsx */}
+      {showCart && (
+        <div className="cart-overlay" onClick={e => e.target.classList.contains('cart-overlay') && setShowCart(false)}>
+          <Cart 
+            cart={cart}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+            clearCart={clearCart}
+            total={cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)}
+            onClose={() => setShowCart(false)}
+          />
         </div>
-      </div>
+      )}
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
@@ -225,7 +227,7 @@ const ProductDetail = () => {
       {/* Notificación de agregado al carrito */}
       {showAddedNotification && (
         <div className="add-to-cart-notification">
-          ✅ Producto agregado al carrito
+          <FaCheck style={{color:'#28a745', marginRight:4}} /> Producto agregado al carrito
         </div>
       )}
 
@@ -241,13 +243,13 @@ const ProductDetail = () => {
               />
             ) : (
               <div className="product-placeholder">
-                🍽️
+                <FaUtensils />
               </div>
             )}
             
             {product.isFeatured && (
               <div className="featured-badge">
-                ⭐ Destacado
+                <FaStar style={{color:'#ffc107', marginRight:4}} /> Destacado
               </div>
             )}
           </div>
@@ -276,10 +278,10 @@ const ProductDetail = () => {
             {/* Estado del stock */}
             <div className="stock-status" style={{ color: stockStatus.color }}>
               <span className="stock-icon">
-                {stockStatus.status === 'available' && '✅'}
-                {stockStatus.status === 'low' && '⚠️'}
-                {stockStatus.status === 'out' && '❌'}
-                {stockStatus.status === 'unlimited' && '♾️'}
+                {stockStatus.status === 'available' && <FaCheck style={{color:'#28a745'}} />}
+                {stockStatus.status === 'low' && <FaExclamationTriangle style={{color:'#ffc107'}} />}
+                {stockStatus.status === 'out' && <FaTimes style={{color:'#dc3545'}} />}
+                {stockStatus.status === 'unlimited' && <FaInfinity style={{color:'#28a745'}} />}
               </span>
               {stockStatus.text}
             </div>
@@ -368,15 +370,15 @@ const ProductDetail = () => {
           {/* Información adicional */}
           <div className="product-features">
             <div className="feature">
-              <span className="feature-icon">🚚</span>
+              <span className="feature-icon"><FaTruck /></span>
               <span>Envío a todo el país</span>
             </div>
             <div className="feature">
-              <span className="feature-icon">🔒</span>
+              <span className="feature-icon"><FaLock /></span>
               <span>Compra protegida</span>
             </div>
             <div className="feature">
-              <span className="feature-icon">💳</span>
+              <span className="feature-icon"><FaCreditCard /></span>
               <span>Múltiples medios de pago</span>
             </div>
           </div>

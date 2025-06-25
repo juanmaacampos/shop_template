@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { FaHourglassHalf } from 'react-icons/fa';
 
 /**
  * Componente que maneja las notificaciones de MercadoPago webhook
@@ -71,7 +72,7 @@ const WebhookHandler = () => {
       flexDirection: 'column',
       gap: '1rem'
     }}>
-      <div style={{ fontSize: '2rem' }}>🔄</div>
+      <div style={{ fontSize: '2rem' }}><FaHourglassHalf /></div>
       <p>Procesando resultado del pago...</p>
       <p style={{ color: '#666', fontSize: '0.9rem' }}>
         Serás redirigido automáticamente

@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { globalFirebaseManager } from '../cms-menu/firebase-manager';
 import './PaymentPending.css';
+import { FaHourglassHalf } from 'react-icons/fa';
 
 const PaymentPending = () => {
   const [searchParams] = useSearchParams();
@@ -74,7 +75,7 @@ const PaymentPending = () => {
       }
 
       try {
-        console.log('⏳ Processing pending payment for order:', orderId);
+        console.log('[Pending] Processing pending payment for order:', orderId);
         console.log('📄 Payment details:', { paymentId, status, collectionStatus });
 
         await globalFirebaseManager.initializeForPayment();

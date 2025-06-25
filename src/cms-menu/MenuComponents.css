@@ -23,7 +23,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: #f5f5f7;
+  background: transparent !important;
   min-height: 100vh;
   /* Eliminar cualquier overflow que pueda causar scroll */
   overflow: visible;
@@ -173,6 +173,16 @@
 .menu-item.unavailable {
   opacity: 0.6;
   filter: grayscale(50%);
+}
+
+.menu-item.out-of-stock .item-image::after {
+  content: '';
+  /* Aquí deberías usar un icono SVG o dejar el espacio para un icono de react si se renderiza desde el componente */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Otros estilos para el overlay */
 }
 
 .item-image {

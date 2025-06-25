@@ -9,6 +9,7 @@ import { httpsCallable } from 'firebase/functions';
 import { doc, getDoc, collection, getDocs, setDoc, serverTimestamp } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { MENU_CONFIG } from '../cms-menu/config.js';
+import { FaStore, FaSyncAlt, FaTimesCircle, FaCheckCircle, FaMoneyBillAlt, FaCreditCard, FaUniversity, FaShoppingCart } from 'react-icons/fa';
 
 // Usar el businessId de la configuración centralizada
 const CURRENT_BUSINESS_ID = MENU_CONFIG.businessId;
@@ -357,7 +358,7 @@ const CheckoutForm = () => {
         {/* Información de la tienda */}
         {restaurantData && (
           <div className="restaurant-info">
-            <h2>🏪 {restaurantData.name}</h2>
+            <h2><FaStore /> {restaurantData.name}</h2>
             {restaurantData.slogan && <p className="slogan">{restaurantData.slogan}</p>}
           </div>
         )}
@@ -469,7 +470,7 @@ const CheckoutForm = () => {
                 onChange={(e) => setSelectedPaymentMethod(e.target.value)}
               />
               <label htmlFor="cash">
-                💵 Pago en Efectivo
+                <FaMoneyBillAlt style={{ marginRight: 6 }} /> Pago en Efectivo
                 <span className="payment-description">Pagar al recibir el producto</span>
               </label>
             </div>
@@ -484,7 +485,7 @@ const CheckoutForm = () => {
                 onChange={(e) => setSelectedPaymentMethod(e.target.value)}
               />
               <label htmlFor="mercadopago">
-                💳 MercadoPago
+                <FaCreditCard style={{ marginRight: 6 }} /> MercadoPago
                 <span className="payment-description">Tarjeta de débito, crédito o efectivo</span>
               </label>
             </div>
@@ -499,7 +500,7 @@ const CheckoutForm = () => {
                 onChange={(e) => setSelectedPaymentMethod(e.target.value)}
               />
               <label htmlFor="transfer">
-                🏦 Transferencia Bancaria
+                <FaUniversity style={{ marginRight: 6 }} /> Transferencia Bancaria
                 <span className="payment-description">Te enviaremos los datos bancarios</span>
               </label>
             </div>
@@ -518,7 +519,7 @@ const CheckoutForm = () => {
             className="submit-button"
             disabled={isLoading || cartItems.length === 0}
           >
-            {isLoading ? 'Procesando...' : '🛒 Confirmar Compra'}
+            {isLoading ? <><FaSyncAlt className="spinner" /> Procesando...</> : <><FaShoppingCart style={{ marginRight: 6 }} /> Confirmar Compra</>}
           </button>
         </form>
       </div>
@@ -694,6 +695,16 @@ const CheckoutForm = () => {
           cursor: not-allowed;
           transform: none;
           box-shadow: none;
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+          margin-right: 8px;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {

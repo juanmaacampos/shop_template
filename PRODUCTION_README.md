@@ -9,7 +9,7 @@ Esta aplicación muestra un sitio web de restaurante moderno con menú dinámico
 - **Menú Dinámico**: Se actualiza automáticamente desde el CMS
 - **Diseño Responsive**: Funciona perfectamente en móviles y desktop
 - **Carga Rápida**: Optimizada para rendimiento
-- **Experiencia Fluida**: Animaciones suaves con GSAP
+- **Experiencia Fluida**: Animaciones suaves
 - **Carrito de Compras**: Funcionalidad completa de pedidos
 
 ### 📱 Acceso
@@ -37,7 +37,6 @@ Esta aplicación muestra un sitio web de restaurante moderno con menú dinámico
 
 - **React + Vite**: Framework moderno
 - **Firebase**: Base de datos en tiempo real
-- **GSAP**: Animaciones profesionales
 - **CSS3**: Estilos modernos
 
 ---

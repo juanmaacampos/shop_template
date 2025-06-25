@@ -1,21 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef, useState } from 'react';
 import { MenuDisplay } from '../../cms-menu/MenuComponents.jsx';
 import { useMenuWithTerminology } from '../../cms-menu/useMenu.js';
 import { MENU_CONFIG, STORE_TERMINOLOGY } from '../../cms-menu/config.js';
 import { menuSDKManager } from '../../cms-menu/menu-sdk-singleton.js';
 import CategorySlider from '../ui/CategorySlider';
+import CategoryPillsMobile from '../ui/CategoryPillsMobile';
 import Cart from '../checkout/Cart';
+import { FaStore } from 'react-icons/fa';
 import '../../styles/sections/Menu.css';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, total, itemCount, firebaseManager }) => {
   const menuRef = useRef(null);
   const titleRef = useRef(null);
   const [showCart, setShowCart] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const isMobile = () => typeof window !== 'undefined' && window.innerWidth <= 768;
 
   // Use the same SDK instance as App.jsx with terminology support
   const menuSDK = menuSDKManager.getInstance(MENU_CONFIG.firebaseConfig, MENU_CONFIG.businessId);
@@ -33,47 +33,35 @@ const Menu = ({ cart, addToCart, updateQuantity, removeFromCart, clearCart, tota
     ? menu.filter(category => category.name.toLowerCase() === selectedCategory.toLowerCase())
     : menu;
 
-  useEffect(() => {
-    gsap.fromTo(titleRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse"
-        }
-      }
-    );
-  }, []);
+  // Obtener categorías para pills
+  const categories = Array.isArray(menu) ? menu.map(category => ({
+    id: category.id || category.name,
+    name: category.name
+  })) : [];
 
   return (
     <section id="menu" className="menu-section store-catalog" ref={menuRef}>
       <div className="container">
-        <div className="menu-header">
-          <h2 className="section-title" ref={titleRef}>
-            🏪 {terminology.menuNameCapitalized}
+        <div className="menu-header" style={{ justifyContent: 'center' }}>
+          <h2 className="section-title" ref={titleRef} style={{ textAlign: 'center', width: '100%' }}>
+            <FaStore /> {terminology.menuNameCapitalized}
           </h2>
-          {itemCount > 0 && (
-            <button 
-              className="cart-btn store-cart-btn"
-              onClick={() => setShowCart(true)}
-            >
-              🛒 {terminology.orderSummary} ({itemCount})
-            </button>
-          )}
         </div>
+        {/* Pills solo en móviles, slider en desktop */}
+        {isMobile() ? (
+          <CategoryPillsMobile
+            categories={categories}
+            selected={selectedCategory}
+            onSelect={handleCategorySelect}
+          />
+        ) : (
+          <CategorySlider
+            menu={menu}
+            onCategorySelect={handleCategorySelect}
+            selectedCategory={selectedCategory}
+          />
+        )}
         
-        {/* Category Slider */}
-        <CategorySlider 
-          menu={menu}
-          onCategorySelect={handleCategorySelect}
-          selectedCategory={selectedCategory}
-        />
-
         {/* Category Filter Status */}
         {selectedCategory && (
           <div className="category-filter-status">

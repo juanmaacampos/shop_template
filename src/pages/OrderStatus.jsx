@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { FaCheckCircle, FaHourglassHalf, FaTimesCircle, FaClipboardList, FaUtensils } from 'react-icons/fa';
 import globalFirebaseManager from '../cms-menu/firebase-manager';
 import './OrderStatus.css';
 
@@ -96,10 +97,10 @@ const OrderStatus = () => {
   }, [orderId]); // Re-run effect if orderId changes
 
   const getStatusIcon = (status, paymentStatus) => {
-    if (paymentStatus === 'paid' || status === 'confirmed') return '✅';
-    if (paymentStatus === 'pending' || status === 'pending') return '⏳';
-    if (paymentStatus === 'failed' || status === 'payment_failed') return '❌';
-    return '📋';
+    if (paymentStatus === 'paid' || status === 'confirmed') return <FaCheckCircle className="status-icon" color="#28a745" />;
+    if (paymentStatus === 'pending' || status === 'pending') return <FaHourglassHalf className="status-icon" color="#ffc107" />;
+    if (paymentStatus === 'failed' || status === 'payment_failed') return <FaTimesCircle className="status-icon" color="#dc3545" />;
+    return <FaClipboardList className="status-icon" color="#6c757d" />;
   };
 
   const getStatusText = (status, paymentStatus) => {
@@ -276,6 +277,7 @@ const OrderStatus = () => {
               <p>✅ Tu pedido ha sido confirmado</p>
               <p>📞 Te contactaremos por WhatsApp para coordinar la entrega</p>
               <p>🍽️ Estamos preparando tu pedido</p>
+              <p><FaUtensils /> Estamos preparando tu pedido</p>
             </div>
           ) : order.paymentStatus === 'pending' ? (
             <div className="pending-steps">

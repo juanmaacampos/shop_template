@@ -2,6 +2,7 @@ import React from 'react';
 import { MenuSDK } from './menu-sdk.js';
 import { ItemVisibilityManager } from './ItemVisibilityManager.jsx';
 import { MENU_CONFIG } from './config.js';
+import { FaUtensils } from 'react-icons/fa';
 
 /**
  * Ejemplo de uso del Gestor de Visibilidad de Items
@@ -39,7 +40,7 @@ export function PublicMenuExample() {
 
   return (
     <div className="public-menu">
-      <h1>🍽️ Nuestro Menú</h1>
+      <h1><FaUtensils /> Nuestro Menú</h1>
       <p>Solo verás los items disponibles</p>
       
       {/* Aquí usarías MenuWithCart que automáticamente filtra items ocultos */}

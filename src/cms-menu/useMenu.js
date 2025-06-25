@@ -102,7 +102,22 @@ export function useMenuWithHidden(menuSDK) {
 
 // Hook para manejar carrito
 export function useCart() {
-  const [cart, setCart] = useState([]);
+  // Leer carrito inicial desde localStorage
+  const getInitialCart = () => {
+    try {
+      const stored = localStorage.getItem('cartItems');
+      if (stored) return JSON.parse(stored);
+    } catch (e) { /* ignore */ }
+    return [];
+  };
+  const [cart, setCart] = useState(getInitialCart);
+
+  // Guardar carrito en localStorage cada vez que cambie
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cart));
+    } catch (e) { /* ignore */ }
+  }, [cart]);
 
   const addToCart = (item, quantity = 1) => {
     // Verificar stock si es una tienda y el item tiene control de stock

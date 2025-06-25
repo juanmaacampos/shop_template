@@ -10,7 +10,7 @@ export const MERCADOPAGO_TEST_CONFIG = {
   baseUrl: 'https://api.mercadopago.com',
   checkoutUrl: 'https://www.mercadopago.com.ar/checkout/v1/redirect',
   
-  // 🏪 Configuración del comercio
+  // [Icono de tienda] Configuración del comercio
   storeId: 'cms-menu-testing',
   storeName: 'CMS Menu - Testing',
   

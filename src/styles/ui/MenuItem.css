@@ -162,7 +162,19 @@
   }
   
   .item-image {
-    padding-bottom: 100% !important; /* Mantiene aspecto cuadrado en móvil */
+    height: 0 !important;
+    padding-bottom: 100% !important;
+    position: relative;
+  }
+  
+  .item-image img,
+  .item-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
   .item-placeholder {

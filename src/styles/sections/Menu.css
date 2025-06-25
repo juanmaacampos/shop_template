@@ -94,9 +94,10 @@
 /* CMS Integration Styles */
 .menu-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
 
 .cms-toggle {
@@ -247,4 +248,11 @@
   .clear-filter-btn {
     width: 100%;
   }
+}
+
+.section-title {
+  text-align: center;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
 }

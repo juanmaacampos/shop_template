@@ -7,12 +7,12 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-brand">
-            <h3>YOUR RESTAURANT</h3>
-            <p>The best dining experience in town</p>
+            <h3>DIGITAL STORE</h3>
+            <p>Tu propia tienda digital :)</p>
           </div>
           
           <div className="footer-social">
-            <h4>Follow Us</h4>
+            <h4>Seguinos:</h4>
             <div className="social-links">
               <a href="#" className="social-link">
                 <FaInstagram />
@@ -38,7 +38,7 @@ const Footer = () => {
         </div>
         
         <div className="footer-bottom">
-          <p>&copy; 2024 Your Restaurant. All rights reserved.</p>
+          <p>&copy; 2025 DIGITAL STORE. Plantilla creada por <a href="https://jmcdev.site" target="_blank" rel="noopener noreferrer">JMCDEV</a>.</p>
         </div>
       </div>
     </footer>

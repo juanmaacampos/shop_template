@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './CustomerForm.css';
+import { FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
 
 const CustomerForm = ({ onSubmit, loading }) => {
   const [formData, setFormData] = useState({
@@ -61,7 +62,7 @@ const CustomerForm = ({ onSubmit, loading }) => {
       <h3>Información de Contacto</h3>
       
       <div className="form-group">
-        <label htmlFor="name">Nombre completo *</label>
+        <label htmlFor="name"><FaUser style={{marginRight: 6, color: '#009688'}} /> Nombre completo *</label>
         <input
           type="text"
           id="name"
@@ -75,7 +76,7 @@ const CustomerForm = ({ onSubmit, loading }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="phone">Teléfono *</label>
+        <label htmlFor="phone"><FaPhoneAlt style={{marginRight: 6, color: '#009688'}} /> Teléfono *</label>
         <input
           type="tel"
           id="phone"
@@ -90,7 +91,7 @@ const CustomerForm = ({ onSubmit, loading }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email"><FaEnvelope style={{marginRight: 6, color: '#009688'}} /> Email</label>
         <input
           type="email"
           id="email"
@@ -104,7 +105,7 @@ const CustomerForm = ({ onSubmit, loading }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="address">Dirección</label>
+        <label htmlFor="address"><FaMapMarkerAlt style={{marginRight: 6, color: '#009688'}} /> Dirección</label>
         <textarea
           id="address"
           name="address"
@@ -116,7 +117,7 @@ const CustomerForm = ({ onSubmit, loading }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="notes">Notas adicionales</label>
+        <label htmlFor="notes"><FaStickyNote style={{marginRight: 6, color: '#009688'}} /> Notas adicionales</label>
         <textarea
           id="notes"
           name="notes"

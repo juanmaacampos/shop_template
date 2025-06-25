@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef, useState } from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
 import '../../styles/sections/Contact.css';
 
@@ -15,27 +13,6 @@ const Contact = () => {
     phone: '',
     message: ''
   });
-
-  useEffect(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: contactRef.current,
-        start: "top 70%",
-        end: "bottom 30%",
-        toggleActions: "play none none reverse"
-      }
-    });
-
-    tl.fromTo(titleRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1 }
-    )
-    .fromTo(formRef.current,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8 },
-      "-=0.5"
-    );
-  }, []);
 
   const handleInputChange = (e) => {
     setFormData({

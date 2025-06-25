@@ -1,10 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { FaUtensils } from 'react-icons/fa';
 import './ProductCard.css';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ProductCard = ({ 
   item, 
@@ -28,27 +25,6 @@ const ProductCard = ({
     }
     navigate(`/producto/${item.id}`);
   };
-
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { opacity: 0, y: 30, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 15%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }
-  }, []);
 
   const imageSource = item.imageUrl || item.image;
   const currentStock = item.stock || 0;
@@ -108,7 +84,7 @@ const ProductCard = ({
             <img src={imageSource} alt={item.name} />
           ) : (
             <div className="product-card-placeholder">
-              🍽️
+              <FaUtensils />
             </div>
           )}
           {getStockBadge()}

@@ -294,3 +294,13 @@
   background-color: #6c757d;
   border-color: #6c757d;
 }
+
+.menu-item.out-of-stock .item-image::after {
+  content: '';
+  /* Aquí deberías usar un icono SVG o dejar el espacio para un icono de react si se renderiza desde el componente */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Otros estilos para el overlay */
+}

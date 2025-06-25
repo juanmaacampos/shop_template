@@ -1,20 +1,29 @@
 import { useState, useEffect } from 'react';
-import { FaHome, FaStore, FaMapMarkerAlt, FaEnvelope, FaShoppingCart } from 'react-icons/fa';
-import '../../styles/navigation/Navbar.css';
+import { FaStore, FaHome, FaBoxOpen, FaMapMarkerAlt, FaEnvelope, FaShoppingCart, FaBars, FaSearch } from 'react-icons/fa';
+import { ProductSearch } from '../ui';
+import { Link } from 'react-router-dom';
+import '../../styles/navigation/NavbarModern.css';
 
-const Navbar = ({ onCartClick, itemCount }) => {
+const Navbar = ({ onCartClick, itemCount, hideMainNavLinks, hideNavLinks }) => {
   const [activeSection, setActiveSection] = useState('home');
   const [isVisible, setIsVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const headerHeight = window.innerHeight;
       const scrollY = window.scrollY;
-      
-      // Show navbar after header
-      setIsVisible(scrollY > headerHeight * 0.8);
-      
-      // Update active section
+      setIsVisible(scrollY > headerHeight * 0.8 || isDesktop);
       const sections = ['home', 'menu', 'location', 'contact'];
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
@@ -24,15 +33,13 @@ const Navbar = ({ onCartClick, itemCount }) => {
         }
         return false;
       });
-      
       if (currentSection) {
         setActiveSection(currentSection);
       }
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isDesktop]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -43,41 +50,79 @@ const Navbar = ({ onCartClick, itemCount }) => {
 
   const navItems = [
     { id: 'home', icon: FaHome, label: 'Inicio' },
-    { id: 'menu', icon: FaStore, label: 'Productos' },
+    { id: 'menu', icon: FaBoxOpen, label: 'Productos' },
     { id: 'location', icon: FaMapMarkerAlt, label: 'Ubicación' },
     { id: 'contact', icon: FaEnvelope, label: 'Contacto' }
   ];
 
   return (
-    <nav className={`navbar ${isVisible ? 'navbar-visible' : ''}`}>
-      <div className="navbar-container">
-        <div className="nav-items">
-          {navItems.map(({ id, icon: Icon, label }) => (
-            <button
+    <nav className="navbar-modern">
+      <div className="navbar-modern-container">
+        {/* Logo */}
+        <Link to="/" className="navbar-modern-logo">
+          <FaStore className="navbar-modern-logo-icon" />
+          Digital Store
+        </Link>
+        {/* Desktop menu */}
+        <div className="navbar-modern-menu">
+          {!hideMainNavLinks && !hideNavLinks && navItems.map(({ id, icon: Icon, label }) => (
+            <a
               key={id}
-              className={`nav-item ${activeSection === id ? 'active' : ''}`}
-              onClick={() => scrollToSection(id)}
+              href={`#${id}`}
+              className="navbar-modern-link"
+              onClick={e => {
+                e.preventDefault();
+                const el = document.getElementById(id);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
-              <Icon className="nav-icon" />
-              <span className="nav-label">{label}</span>
-            </button>
+              <Icon className="navbar-modern-link-icon" /> {label}
+            </a>
           ))}
         </div>
-        
-        {/* Botón del carrito en la derecha */}
-        <button 
-          className="nav-item cart-nav-item"
-          onClick={onCartClick}
-        >
-          <div className="cart-icon-container">
-            <FaShoppingCart className="nav-icon" />
-            {itemCount > 0 && (
-              <span className="cart-badge">{itemCount}</span>
-            )}
+        {/* Search + Cart + Mobile button */}
+        <div className="navbar-modern-actions">
+          <div className="navbar-modern-search-desktop">
+            <ProductSearch />
           </div>
-          <span className="nav-label">Carrito</span>
-        </button>
+          <a href="#" className="navbar-modern-cart" onClick={onCartClick}>
+            <FaShoppingCart className="navbar-modern-cart-icon" /> Carrito
+            {itemCount > 0 && <span className="navbar-modern-cart-badge">{itemCount}</span>}
+          </a>
+          <button className="navbar-modern-mobile-btn" onClick={() => setMobileMenuOpen(v => !v)}>
+            <FaBars className="navbar-modern-mobile-icon" />
+          </button>
+        </div>
       </div>
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="navbar-modern-mobile-menu">
+          <div className="navbar-modern-search-mobile">
+            <ProductSearch />
+          </div>
+          <div className="navbar-modern-mobile-links">
+            {!hideMainNavLinks && !hideNavLinks && navItems.map(({ id, icon: Icon, label }) => (
+              <a
+                key={id}
+                href={`#${id}`}
+                className="navbar-modern-link"
+                onClick={e => {
+                  e.preventDefault();
+                  const el = document.getElementById(id);
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  }
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <Icon className="navbar-modern-link-icon" /> {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

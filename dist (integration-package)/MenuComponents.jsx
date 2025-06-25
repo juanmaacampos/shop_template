@@ -5,6 +5,7 @@ import { StockIndicator } from './StockIndicator.jsx';
 import { getFirestore } from 'firebase/firestore';
 import './MenuComponents.css';
 import './StockIndicator.css';
+import { FaUtensils, FaSyncAlt } from 'react-icons/fa';
 
 // Funciones helper para manejo de stock
 function getStockClass(item) {
@@ -88,19 +89,19 @@ function ImageWithFallback({ src, alt, className, placeholder = "🍽️" }) {
     console.warn(`Error al cargar imagen: ${src}`);
   };
 
-  // Si no hay src, mostrar placeholder directamente
+  // Si no hay src, mostrar icono de cubiertos
   if (!src) {
-    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
+    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
   }
 
-  // Si hubo error, mostrar placeholder
+  // Si hubo error, mostrar icono de cubiertos
   if (error) {
-    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
+    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
   }
 
   return (
     <div className={className} style={{ position: 'relative' }}>
-      {loading && <div className="item-placeholder">🔄</div>}
+      {loading && <div className="item-placeholder"><FaSyncAlt className="spin" /></div>}
       <img 
         src={src} 
         alt={alt}

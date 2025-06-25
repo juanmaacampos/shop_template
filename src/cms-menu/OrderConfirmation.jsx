@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { createMenuSDK } from './menu-sdk.js';
 import { MENU_CONFIG } from './config.js';
+import { FaStore, FaUtensils } from 'react-icons/fa';
 
 export function OrderConfirmation() {
   const { orderId } = useParams();
@@ -44,16 +45,15 @@ export function OrderConfirmation() {
   }
 
   const businessType = business?.businessType || 'restaurant';
-  const icon = businessType === 'store' ? '🏪' : '🍽️';
+  const icon = businessType === 'store' ? <FaStore /> : <FaUtensils />;
   const businessLabel = businessType === 'store' ? 'Tienda' : 'Restaurante';
 
   return (
     <div className="order-confirmation">
       <div className="success-header">
-        <h1>✅ ¡Pedido Confirmado!</h1>
+        <h1><span role="img" aria-label="check">✅</span> ¡Pedido Confirmado!</h1>
         <p>Tu pedido ha sido recibido correctamente</p>
       </div>
-
       <div className="order-details">
         <h2>Detalles del Pedido</h2>
         <p><strong>Número de pedido:</strong> {order.id}</p>

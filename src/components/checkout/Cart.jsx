@@ -5,6 +5,7 @@ import { OrderService } from '../../cms-menu/order-service';
 import { paymentService } from '../../cms-menu/payment-service';
 import { MENU_CONFIG } from '../../cms-menu/config';
 import './Cart.css';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0, onClose, firebaseManager }) => {
   const [currentStep, setCurrentStep] = useState('cart'); // 'cart', 'payment', 'customer'
@@ -110,7 +111,7 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     console.log('✅ Cash order created:', order);
     
     // Show success message for cash payment
-    alert(`¡Pedido confirmado! 🎉\n\nID: ${order.orderId}\n\nTe contactaremos por WhatsApp para coordinar el retiro.\n\nTotal a pagar: $${safeTotal.toFixed(2)} ARS`);
+    alert(`¡Pedido confirmado!` + '\n\nID: ' + order.orderId + '\n\nTe contactaremos por WhatsApp para coordinar el retiro.\n\nTotal a pagar: $' + safeTotal.toFixed(2) + ' ARS');
     
     clearCart();
     onClose();
@@ -130,7 +131,7 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     console.log('✅ Transfer order created:', order);
     
     // Show success message for transfer payment
-    alert(`¡Pedido confirmado! 🎉\n\nID: ${order.orderId}\n\nTe enviaremos los datos bancarios por WhatsApp para realizar la transferencia.\n\nTotal a transferir: $${safeTotal.toFixed(2)} ARS`);
+    alert(`¡Pedido confirmado!` + '\n\nID: ' + order.orderId + '\n\nTe enviaremos los datos bancarios por WhatsApp para realizar la transferencia.\n\nTotal a transferir: $' + safeTotal.toFixed(2) + ' ARS');
     
     clearCart();
     onClose();
@@ -219,7 +220,7 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
                   onClick={() => removeFromCart(item.id)}
                   className="remove-btn"
                 >
-                  🗑️
+                  <FaTrashAlt style={{ color: '#888' }} />
                 </button>
               </div>
             ))}

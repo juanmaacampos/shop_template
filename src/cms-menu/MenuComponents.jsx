@@ -6,6 +6,7 @@ import { getFirestore } from 'firebase/firestore';
 import ProductCard from '../components/ui/ProductCard.jsx';
 import './MenuComponents.css';
 import './StockIndicator.css';
+import { FaUtensils, FaSyncAlt } from 'react-icons/fa';
 
 // Utilidades para manejar items ocultos y disponibilidad
 function isItemVisible(item) {
@@ -60,7 +61,7 @@ export function CategoryNav({ categories, terminology = {}, className = "" }) {
 }
 
 // Componente para imagen con loading y error handling mejorado
-function ImageWithFallback({ src, alt, className, placeholder = "🍽️" }) {
+function ImageWithFallback({ src, alt, className, placeholder = <FaUtensils /> }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -74,19 +75,19 @@ function ImageWithFallback({ src, alt, className, placeholder = "🍽️" }) {
     setError(true);
   };
 
-  // Si no hay src válido, mostrar placeholder directamente
+  // Si no hay src válido, mostrar icono de cubiertos
   if (!src || src.length === 0) {
-    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
+    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
   }
 
-  // Si hubo error, mostrar placeholder
+  // Si hubo error, mostrar icono de cubiertos
   if (error) {
-    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
+    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
   }
 
   return (
     <div className={className}>
-      {loading && <div className="item-placeholder">🔄</div>}
+      {loading && <div className="item-placeholder"><FaSyncAlt className="spin" /></div>}
       <img 
         src={src} 
         alt={alt}
@@ -365,7 +366,7 @@ export function MenuWithCart({
       <div className="menu-section">
         {businessData && (
           <div className="restaurant-header">
-            <h1>{icon} {businessData.name}</h1>
+            <h1 className="restaurant-title">Categorias:</h1>
             {businessData.description && (
               <p className="restaurant-description">{businessData.description}</p>
             )}

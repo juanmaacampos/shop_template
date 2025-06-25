@@ -1,29 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef } from 'react';
 import '../../styles/ui/MenuItem.css';
 
 const MenuItem = ({ item }) => {
   const itemRef = useRef(null);
-
-  useEffect(() => {
-    gsap.fromTo(itemRef.current,
-      { opacity: 0, y: 30, scale: 0.9 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: itemRef.current,
-          start: "top 85%",
-          end: "bottom 15%",
-          toggleActions: "play none none reverse"
-        }
-      }
-    );
-  }, []);
 
   return (
     <div ref={itemRef} className="menu-item">
