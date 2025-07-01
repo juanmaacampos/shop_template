@@ -43,6 +43,11 @@ export const MENU_CONFIG = {
   // 🌐 URLs de tu aplicación
   baseUrl: "https://juanmaacampos.github.io/shop_template", // Tu GitHub Pages URL
   backendUrl: "https://us-central1-cms-menu-7b4a4.cloudfunctions.net", // Tu Cloud Functions URL
+  backUrls: {
+    success: "https://juanmaacampos.github.io/shop_template/#/payment/success",
+    pending: "https://juanmaacampos.github.io/shop_template/#/payment/pending", 
+    failure: "https://juanmaacampos.github.io/shop_template/#/payment/failure"
+  },
   
   // 🧪 Testing/Development Configuration
   testing: {

@@ -26,6 +26,57 @@ export class PaymentService {
     }
   }
 
+  _validateOrderData(orderData) {
+    console.log('🔍 Validating order data:', {
+      hasBusinessId: !!orderData.businessId,
+      businessId: orderData.businessId,
+      hasItems: !!orderData.items,
+      itemsLength: orderData.items?.length,
+      hasCustomer: !!orderData.customer,
+      customerData: orderData.customer,
+      hasTotalAmount: !!orderData.totalAmount,
+      totalAmount: orderData.totalAmount,
+      hasOrderId: !!orderData.orderId,
+      orderId: orderData.orderId,
+      hasBackUrls: !!orderData.backUrls,
+      backUrls: orderData.backUrls
+    });
+
+    if (!orderData.businessId || typeof orderData.businessId !== 'string') {
+      throw new Error('businessId is required and must be a string');
+    }
+
+    if (!orderData.items || !Array.isArray(orderData.items) || orderData.items.length === 0) {
+      throw new Error('items is required and must be a non-empty array');
+    }
+
+    if (!orderData.customer || typeof orderData.customer !== 'object' || !orderData.customer.name || !orderData.customer.phone) {
+      throw new Error('customer is required with name and phone');
+    }
+
+    if (!orderData.totalAmount || typeof orderData.totalAmount !== 'number' || orderData.totalAmount <= 0) {
+      throw new Error('totalAmount is required and must be a positive number');
+    }
+
+    if (!orderData.orderId || typeof orderData.orderId !== 'string') {
+      throw new Error('orderId is required and must be a string');
+    }
+
+    if (!orderData.backUrls || typeof orderData.backUrls !== 'object' || 
+        !orderData.backUrls.success || !orderData.backUrls.pending || !orderData.backUrls.failure) {
+      throw new Error('backUrls is required with success, pending, and failure URLs');
+    }
+
+    // Validar estructura de items
+    for (const item of orderData.items) {
+      if (!item.name || typeof item.unit_price !== 'number' || typeof item.quantity !== 'number') {
+        throw new Error(`Invalid item structure: ${JSON.stringify(item)}`);
+      }
+    }
+
+    console.log('✅ Order data validation passed');
+  }
+
   /**
    * Crear preferencia de pago en MercadoPago usando Cloud Functions
    * @param {Object} orderData - Datos del pedido
@@ -44,8 +95,15 @@ export class PaymentService {
         // Llamar a Cloud Function (onCall)
         const createPreference = httpsCallable(this.functions, 'createMercadoPagoPreference');
         
+        console.log('📤 Sending data to Cloud Function:', {
+          businessId: orderData.businessId,
+          itemsCount: orderData.items.length,
+          totalAmount: orderData.totalAmount,
+          orderId: orderData.orderId
+        });
+
         const result = await createPreference({
-          businessId: orderData.businessId, // ID del negocio para Cloud Function
+          businessId: orderData.businessId,
           items: orderData.items,
           customer: orderData.customer,
           totalAmount: orderData.totalAmount,
@@ -63,10 +121,18 @@ export class PaymentService {
             order_id: result.data.order_id
           };
         } else {
+          console.error('❌ Failed to create preference:', result.data);
           throw new Error('Failed to create payment preference');
         }
       } catch (firebaseError) {
-        console.warn('⚠️ Firebase callable failed, trying HTTP fallback:', firebaseError);
+        console.error('❌ Firebase callable error details:', {
+          code: firebaseError.code,
+          message: firebaseError.message,
+          details: firebaseError.details,
+          stack: firebaseError.stack
+        });
+        
+        console.warn('⚠️ Firebase callable failed, trying HTTP fallback');
         
         // Fallback to HTTP function
         const response = await fetch('https://us-central1-cms-menu-7b4a4.cloudfunctions.net/createMercadoPagoPreferenceHTTP', {
@@ -75,7 +141,7 @@ export class PaymentService {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            businessId: orderData.businessId, // ID del negocio para HTTP function
+            businessId: orderData.businessId,
             items: orderData.items,
             payer: orderData.customer,
             totalAmount: orderData.totalAmount,
@@ -87,6 +153,11 @@ export class PaymentService {
 
         if (!response.ok) {
           const errorData = await response.json();
+          console.error('❌ HTTP fallback failed:', {
+            status: response.status,
+            statusText: response.statusText,
+            errorData
+          });
           throw new Error(`HTTP function failed: ${errorData.message || response.statusText}`);
         }
 
@@ -96,7 +167,10 @@ export class PaymentService {
       }
 
     } catch (error) {
-      console.error('❌ Error creating MercadoPago preference:', error);
+      console.error('❌ Error creating MercadoPago preference:', {
+        message: error.message,
+        stack: error.stack
+      });
       throw new Error(`Payment error: ${error.message}`);
     }
   }
@@ -109,49 +183,14 @@ export class PaymentService {
    */
   generateBackUrls(baseUrl, orderId) {
     // Usar siempre la URL de producción para las URLs de retorno
-    const prodBaseUrl = "https://juanmaacampos.github.io/restaurant_template";
+    const prodBaseUrl = "https://juanmaacampos.github.io/shop_template";
     
     // MercadoPago reemplaza automáticamente estos placeholders
     return {
-      success: `${prodBaseUrl}/payment/success?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`,
-      pending: `${prodBaseUrl}/payment/pending?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`,
-      failure: `${prodBaseUrl}/payment/failure?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`
+      success: `${prodBaseUrl}/#/payment/success?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`,
+      pending: `${prodBaseUrl}/#/payment/pending?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`,
+      failure: `${prodBaseUrl}/#/payment/failure?order=${orderId}&payment_id={{payment_id}}&status={{status}}&collection_status={{collection_status}}&source=mp_redirect`
     };
-  }
-
-  /**
-   * Validar datos del pedido antes de enviar
-   * @private
-   */
-  _validateOrderData(orderData) {
-    const required = ['businessId', 'items', 'customer', 'totalAmount', 'orderId', 'backUrls'];
-    
-    for (const field of required) {
-      if (!orderData[field]) {
-        throw new Error(`Missing required field: ${field}`);
-      }
-    }
-
-    // Validar items
-    if (!Array.isArray(orderData.items) || orderData.items.length === 0) {
-      throw new Error('Items must be a non-empty array');
-    }
-
-    // Validar customer
-    if (!orderData.customer.name || !orderData.customer.phone) {
-      throw new Error('Customer name and phone are required');
-    }
-
-    // Validar total
-    if (typeof orderData.totalAmount !== 'number' || orderData.totalAmount <= 0) {
-      throw new Error('Total amount must be a positive number');
-    }
-
-    // Validar URLs de retorno
-    const { success, pending, failure } = orderData.backUrls;
-    if (!success || !pending || !failure) {
-      throw new Error('All back URLs (success, pending, failure) are required');
-    }
   }
 }
 

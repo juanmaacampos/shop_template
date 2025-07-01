@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { MENU_CONFIG } from './config.js';
+import BankInfo from './BankInfo.jsx';
 
 export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, menuSDK }) {
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -14,6 +15,8 @@ export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, men
   });
   const [loading, setLoading] = useState(false);
   const [stockValidation, setStockValidation] = useState(null);
+  const [showBankInfo, setShowBankInfo] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState('');
 
   // Validar stock cuando cambia el carrito
   React.useEffect(() => {
@@ -93,7 +96,7 @@ export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, men
         // Redirigir a confirmación
         window.location.href = `/confirmacion-pedido/${orderId}`;
       } else if (paymentMethod === 'transferencia') {
-        // Flujo Transferencia - guardar directamente (funciona igual que efectivo)
+        // Flujo Transferencia - guardar directamente y mostrar información bancaria
         const db = getFirestore();
         await setDoc(doc(db, 'orders', orderId), {
           businessId: MENU_CONFIG.businessId,
@@ -109,12 +112,11 @@ export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, men
           notes: customerInfo.notes || ''
         });
 
-        // Para pedidos por transferencia, el stock se actualizará cuando el admin
-        // marque el pago como "pagado" en el panel de administración
-        console.log('Transfer order created, stock will be updated when payment is confirmed by admin');
+        console.log('Transfer order created:', orderId);
 
-        // Redirigir a confirmación
-        window.location.href = `/confirmacion-pedido/${orderId}`;
+        // Mostrar información bancaria en lugar de redirigir
+        setCurrentOrderId(orderId);
+        setShowBankInfo(true);
       }
     } catch (error) {
       console.error('Error al procesar pedido:', error);
@@ -123,6 +125,39 @@ export function CheckoutFlow({ cart, cartTotal, restaurant, onOrderComplete, men
       setLoading(false);
     }
   };
+
+  const handleBankInfoConfirm = () => {
+    // Cuando el usuario confirma que realizó la transferencia
+    alert('¡Transferencia confirmada! Te contactaremos por WhatsApp cuando recibamos el pago.');
+    
+    // Limpiar carrito y cerrar
+    if (onOrderComplete) {
+      onOrderComplete(currentOrderId);
+    }
+    
+    // Opcional: redirigir a confirmación
+    window.location.href = `/confirmacion-pedido/${currentOrderId}`;
+  };
+
+  const handleBankInfoCancel = () => {
+    // Volver al formulario de checkout
+    setShowBankInfo(false);
+    setCurrentOrderId('');
+  };
+
+  // Si se debe mostrar la información bancaria, renderizar BankInfo
+  if (showBankInfo && restaurant?.bankInfo) {
+    return (
+      <BankInfo
+        bankInfo={restaurant.bankInfo}
+        totalAmount={cartTotal}
+        orderNumber={currentOrderId}
+        onConfirm={handleBankInfoConfirm}
+        onCancel={handleBankInfoCancel}
+        whatsappNumber={restaurant.whatsappNumber || restaurant.phone}
+      />
+    );
+  }
 
   return (
     <div className="checkout-flow">

@@ -12,11 +12,8 @@ export const MENU_CONFIG = {
     appId: "1:509736809578:web:15471af092f3b46392c613"
   },
   
-  // ✅ Business ID (recomendado)
-  businessId: "HsuTZWhRVkT88a0WOztELGzJUhl1",
-  
-  // 🔄 Restaurant ID (para compatibilidad - mismo valor que businessId)
-  restaurantId: "HsuTZWhRVkT88a0WOztELGzJUhl1"
+  // ✅ Business ID configurado
+  businessId: "HsuTZWhRVkT88a0WOztELGzJUhl1"
 };
 
 // Función para obtener el UID del business
@@ -27,12 +24,11 @@ export const MENU_CONFIG = {
 // 4. Copia ese UID y reemplaza "YOUR_BUSINESS_UID_HERE" arriba
 
 export function validateConfig() {
-  if (MENU_CONFIG.businessId === "YOUR_BUSINESS_UID_HERE" || 
-      MENU_CONFIG.restaurantId === "YOUR_BUSINESS_UID_HERE") {
+  if (MENU_CONFIG.businessId === "YOUR_BUSINESS_UID_HERE") {
     console.warn("⚠️ Configuración incompleta!");
     console.log("📝 Para obtener tu Business UID:");
     console.log("1. Ve a tu panel CMS de menús");
-    console.log("2. Haz login con la cuenta del business/restaurant");
+    console.log("2. Haz login con la cuenta del business");
     console.log("3. Abre las herramientas de desarrollador (F12)");
     console.log("4. En la consola ejecuta: firebase.auth().currentUser.uid");
     console.log("5. Copia ese UID a config.js");
@@ -40,3 +36,5 @@ export function validateConfig() {
   }
   return true;
 }
+
+export default MENU_CONFIG;

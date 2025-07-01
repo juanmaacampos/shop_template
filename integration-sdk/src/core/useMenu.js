@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Hook principal para usar el menú
 export function useMenu(menuSDK) {
-  const [business, setBusiness] = useState(null);
-  const [restaurant, setRestaurant] = useState(null); // Mantener para compatibilidad
+  const [restaurant, setRestaurant] = useState(null);
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,13 +13,12 @@ export function useMenu(menuSDK) {
         setLoading(true);
         setError(null);
         
-        const [businessData, menuData] = await Promise.all([
-          menuSDK.getBusinessInfo(),
+        const [restaurantData, menuData] = await Promise.all([
+          menuSDK.getRestaurantInfo(),
           menuSDK.getFullMenu()
         ]);
         
-        setBusiness(businessData);
-        setRestaurant(businessData); // Para compatibilidad con código existente
+        setRestaurant(restaurantData);
         setMenu(menuData);
       } catch (err) {
         setError(err.message);
@@ -35,13 +33,7 @@ export function useMenu(menuSDK) {
     }
   }, [menuSDK]);
 
-  return { 
-    business, 
-    restaurant, // Mantener para compatibilidad
-    menu, 
-    loading, 
-    error 
-  };
+  return { restaurant, menu, loading, error };
 }
 
 // Hook para manejar carrito
@@ -158,85 +150,4 @@ export function useFeaturedItems(menuSDK) {
   return { featuredItems, loading, error };
 }
 
-// Hook para terminología dinámica basada en el tipo de negocio
-export function useBusinessTerminology(businessType) {
-  const [terminology, setTerminology] = useState({});
-
-  useEffect(() => {
-    const getTerminology = () => {
-      if (businessType === 'store') {
-        return {
-          businessName: 'Tienda',
-          menuName: 'catálogo',
-          menuNameCapitalized: 'Catálogo',
-          itemType: 'producto',
-          itemTypeCapitalized: 'Producto',
-          itemTypePlural: 'productos',
-          itemTypePluralCapitalized: 'Productos',
-          itemSingular: 'producto',
-          items: 'productos',
-          categoryType: 'categoría',
-          orderType: 'orden de compra',
-          orderTypeCapitalized: 'Orden de Compra',
-          addToCart: 'Agregar al Carrito',
-          viewCatalog: 'Ver Catálogo',
-          viewProducts: 'Ver Productos',
-          featuredProducts: 'Productos Destacados',
-          allProducts: 'Todos los Productos',
-          productDetails: 'Detalles del Producto',
-          orderSummary: 'Resumen de Compra',
-          placeOrder: 'Realizar Pedido',
-          serviceOptions: {
-            delivery: 'Envío a domicilio',
-            pickup: 'Retiro en tienda',
-            shipping: 'Envío postal'
-          }
-        };
-      }
-
-      // Default: restaurant terminology
-      return {
-        businessName: 'Restaurante',
-        menuName: 'menú',
-        menuNameCapitalized: 'Menú',
-        itemType: 'plato',
-        itemTypeCapitalized: 'Plato',
-        itemTypePlural: 'platos',
-        itemTypePluralCapitalized: 'Platos',
-        itemSingular: 'plato',
-        items: 'platos',
-        categoryType: 'categoría',
-        orderType: 'pedido',
-        orderTypeCapitalized: 'Pedido',
-        addToCart: 'Agregar al Pedido',
-        viewCatalog: 'Ver Menú',
-        viewProducts: 'Ver Platos',
-        featuredProducts: 'Platos Destacados',
-        allProducts: 'Todos los Platos',
-        productDetails: 'Detalles del Plato',
-        orderSummary: 'Resumen del Pedido',
-        placeOrder: 'Realizar Pedido',
-        serviceOptions: {
-          dineIn: 'Comer en el local',
-          takeaway: 'Para llevar',
-          delivery: 'Delivery'
-        }
-      };
-    };
-
-    setTerminology(getTerminology());
-  }, [businessType]);
-
-  return terminology;
-}
-
-// Hook combinado que incluye terminología
-export function useMenuWithTerminology(menuSDK) {
-  const menuData = useMenu(menuSDK);
-  const terminology = useBusinessTerminology(menuData.business?.businessType);
-
-  return {
-    ...menuData,
-    terminology
-  };
-}
+export default useMenu;

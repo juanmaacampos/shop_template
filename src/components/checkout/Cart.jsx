@@ -4,14 +4,16 @@ import PaymentSelection from './PaymentSelection';
 import { OrderService } from '../../cms-menu/order-service';
 import { paymentService } from '../../cms-menu/payment-service';
 import { MENU_CONFIG } from '../../cms-menu/config';
+import BankInfo from '../../../integration-sdk/src/core/BankInfo.jsx';
 import './Cart.css';
 import { FaTrashAlt } from 'react-icons/fa';
 
 const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0, onClose, firebaseManager }) => {
-  const [currentStep, setCurrentStep] = useState('cart'); // 'cart', 'payment', 'customer'
+  const [currentStep, setCurrentStep] = useState('cart'); // 'cart', 'payment', 'customer', 'bankinfo'
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
   const [orderService, setOrderService] = useState(null);
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   // Ensure total is always a number
   const safeTotal = typeof total === 'number' ? total : 0;
@@ -130,11 +132,13 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     const order = await orderService.createOrder(orderData);
     console.log('✅ Transfer order created:', order);
     
-    // Show success message for transfer payment
-    alert(`¡Pedido confirmado!` + '\n\nID: ' + order.orderId + '\n\nTe enviaremos los datos bancarios por WhatsApp para realizar la transferencia.\n\nTotal a transferir: $' + safeTotal.toFixed(2) + ' ARS');
-    
-    clearCart();
-    onClose();
+    // Store order info and show bank information instead of alert
+    setCurrentOrder({
+      ...order,
+      total: safeTotal,
+      customer: customerData
+    });
+    setCurrentStep('bankinfo');
   };
 
   const handleMercadoPagoPayment = async (orderId, customerData) => {
@@ -186,6 +190,20 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
     }
   };
 
+  // Funciones para manejar la información bancaria
+  const handleBankInfoConfirm = () => {
+    // Cuando el usuario confirma que realizó la transferencia
+    alert('¡Gracias! Te contactaremos por WhatsApp cuando recibamos la transferencia.');
+    clearCart();
+    onClose();
+  };
+
+  const handleBankInfoCancel = () => {
+    // Volver al paso anterior (customer form)
+    setCurrentStep('customer');
+    setCurrentOrder(null);
+  };
+
   if (cart.length === 0) {
     return (
       <div className="cart-empty">
@@ -202,64 +220,85 @@ const Cart = ({ cart = [], updateQuantity, removeFromCart, clearCart, total = 0,
         <button onClick={onClose} className="close-btn">×</button>
       </div>
 
-      {currentStep === 'cart' && (
-        <>
-          <div className="cart-items">
-            {cart.map(item => (
-              <div key={item.id} className="cart-item">
-                <div className="item-info">
-                  <h4>{item.name}</h4>
-                  <p className="item-price">${item.price}</p>
+      <div className="cart-main-container scrollable-content">
+        {currentStep === 'cart' && (
+          <>
+            <div className="cart-items">
+              {cart.map(item => (
+                <div key={item.id} className="cart-item">
+                  <div className="item-info">
+                    <h4>{item.name}</h4>
+                    <p className="item-price">${item.price}</p>
+                  </div>
+                  <div className="quantity-controls">
+                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                  </div>
+                  <button 
+                    onClick={() => removeFromCart(item.id)}
+                    className="remove-btn"
+                  >
+                    <FaTrashAlt style={{ color: '#888' }} />
+                  </button>
                 </div>
-                <div className="quantity-controls">
-                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
-                  <span>{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                </div>
-                <button 
-                  onClick={() => removeFromCart(item.id)}
-                  className="remove-btn"
-                >
-                  <FaTrashAlt style={{ color: '#888' }} />
-                </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="cart-total">
-            <h3>Total: ${safeTotal.toFixed(2)} ARS</h3>
-          </div>
+            <div className="cart-total">
+              <h3>Total: ${safeTotal.toFixed(2)} ARS</h3>
+            </div>
 
-          <div className="cart-actions">
-            <button onClick={clearCart} className="clear-btn">
-              Vaciar Carrito
-            </button>
-            <button 
-              onClick={() => setCurrentStep('payment')}
-              className="checkout-btn"
-            >
-              Continuar
-            </button>
-          </div>
-        </>
-      )}
+            <div className="cart-actions">
+              <button onClick={clearCart} className="clear-btn">
+                Vaciar Carrito
+              </button>
+              <button 
+                onClick={() => setCurrentStep('payment')}
+                className="checkout-btn"
+              >
+                Continuar
+              </button>
+            </div>
+          </>
+        )}
 
-      {currentStep === 'payment' && (
-        <PaymentSelection
-          onSelect={handlePaymentMethodSelect}
-          onBack={() => setCurrentStep('cart')}
-          total={total}
-        />
-      )}
+        {currentStep === 'payment' && (
+          <PaymentSelection
+            onSelect={handlePaymentMethodSelect}
+            onBack={() => setCurrentStep('cart')}
+            total={total}
+          />
+        )}
 
-      {currentStep === 'customer' && (
-        <CustomerForm
-          onSubmit={handleCustomerSubmit}
-          loading={loading}
-          paymentMethod={selectedPaymentMethod}
-          onBack={() => setCurrentStep('payment')}
-        />
-      )}
+        {currentStep === 'customer' && (
+          <CustomerForm
+            onSubmit={handleCustomerSubmit}
+            loading={loading}
+            paymentMethod={selectedPaymentMethod}
+            onBack={() => setCurrentStep('payment')}
+          />
+        )}
+
+        {currentStep === 'bankinfo' && currentOrder && (
+          <BankInfo
+            bankInfo={{
+              bankName: "Banco Santander",
+              accountType: "Cuenta Corriente", 
+              accountNumber: "123-456789-0",
+              cbu: "0720123188000041234567",
+              alias: "RESTAURANT.ALIAS",
+              holderName: "Restaurante Demo",
+              holderDni: "12.345.678"
+            }}
+            totalAmount={currentOrder.total}
+            orderNumber={currentOrder.orderId}
+            onConfirm={handleBankInfoConfirm}
+            onCancel={handleBankInfoCancel}
+            whatsappNumber="+54 9 11 1234-5678"
+          />
+        )}
+      </div>
     </div>
   );
 };

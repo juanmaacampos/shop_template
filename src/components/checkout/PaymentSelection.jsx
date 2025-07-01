@@ -3,7 +3,7 @@ import { FaMoneyBillWave, FaCreditCard, FaUniversity, FaArrowRight, FaLock, FaBo
 
 const PaymentSelection = ({ onSelect, onBack, total }) => {
   return (
-    <div className="payment-selection">
+    <div className="payment-selection scrollable-content">
       <div className="payment-header">
         <button onClick={onBack} className="back-btn">← Volver</button>
         <h3>Método de Pago</h3>

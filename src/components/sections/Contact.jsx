@@ -23,8 +23,29 @@ const Contact = () => {
 
   const handleWhatsAppSubmit = (e) => {
     e.preventDefault();
-    // WhatsApp functionality will be implemented later
+    
+    // Construir mensaje para WhatsApp
+    let message = `¡Hola! Me gustaría hacer una consulta:\n\n`;
+    message += `👤 *Nombre:* ${formData.name}\n`;
+    message += `📞 *Teléfono:* ${formData.phone}\n`;
+    message += `📧 *Email:* ${formData.email}\n\n`;
+    
+    if (formData.message.trim()) {
+      message += `💬 *Mensaje:*\n${formData.message}\n\n`;
+    }
+    
+    message += `¡Gracias!`;
+    
+    // Crear URL de WhatsApp
+    const phoneNumber = "5493492648488"; // Cambiar por el número del restaurante
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    // Abrir WhatsApp
+    window.open(whatsappUrl, '_blank');
+    
     console.log('Form data:', formData);
+    console.log('WhatsApp message:', message);
   };
 
   return (
@@ -34,8 +55,8 @@ const Contact = () => {
         
         <div className="contact-content">
           <div className="contact-info">
-            <h3>¿Tienes alguna pregunta?</h3>
-            <p>Escríbenos y te responderemos lo antes posible. También puedes hacer tu pedido directamente por WhatsApp.</p>
+            <h3>¿Tienes alguna consulta?</h3>
+            <p>Completa el formulario y te responderemos por WhatsApp.</p>
           </div>
           
           <form ref={formRef} className="contact-form" onSubmit={handleWhatsAppSubmit}>
@@ -43,19 +64,8 @@ const Contact = () => {
               <input
                 type="text"
                 name="name"
-                placeholder="Tu nombre"
+                placeholder="Nombre completo"
                 value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <input
-                type="email"
-                name="email"
-                placeholder="Tu email"
-                value={formData.email}
                 onChange={handleInputChange}
                 required
               />
@@ -65,8 +75,19 @@ const Contact = () => {
               <input
                 type="tel"
                 name="phone"
-                placeholder="Tu teléfono"
+                placeholder="Teléfono"
                 value={formData.phone}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleInputChange}
                 required
               />
@@ -76,7 +97,7 @@ const Contact = () => {
               <textarea
                 name="message"
                 placeholder="Tu mensaje"
-                rows="5"
+                rows="4"
                 value={formData.message}
                 onChange={handleInputChange}
                 required
@@ -93,5 +114,6 @@ const Contact = () => {
     </section>
   );
 };
+
 
 export default Contact;

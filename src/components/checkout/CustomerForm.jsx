@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import './CustomerForm.css';
-import { FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaStickyNote } from 'react-icons/fa';
+import { FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaStore, FaTruck } from 'react-icons/fa';
 
-const CustomerForm = ({ onSubmit, loading }) => {
+const CustomerForm = ({ onSubmit, loading, paymentMethod }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
+    deliveryOption: paymentMethod === 'cash' ? 'pickup' : 'pickup', // 'pickup' o 'delivery'
     address: '',
     notes: ''
   });
@@ -57,8 +58,22 @@ const CustomerForm = ({ onSubmit, loading }) => {
     }
   };
 
+  const handleDeliveryOptionChange = (e) => {
+    // Si es efectivo, siempre mantener pickup
+    if (paymentMethod === 'cash') {
+      return;
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      deliveryOption: e.target.value,
+      // Limpiar dirección si se selecciona retiro
+      address: e.target.value === 'pickup' ? '' : prev.address
+    }));
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="customer-form">
+    <form onSubmit={handleSubmit} className="customer-form scrollable-content">
       <h3>Información de Contacto</h3>
       
       <div className="form-group">
@@ -104,17 +119,97 @@ const CustomerForm = ({ onSubmit, loading }) => {
         {errors.email && <span className="error-message">{errors.email}</span>}
       </div>
 
-      <div className="form-group">
-        <label htmlFor="address"><FaMapMarkerAlt style={{marginRight: 6, color: '#009688'}} /> Dirección</label>
-        <textarea
-          id="address"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          disabled={loading}
-          rows="3"
-        />
-      </div>
+      {/* Opción de entrega */}
+      {paymentMethod === 'cash' ? (
+        <div className="form-group delivery-info">
+          <label className="delivery-label">Opción de entrega:</label>
+          <div className="cash-delivery-notice" style={{ 
+            padding: '1rem', 
+            backgroundColor: '#fff3cd', 
+            border: '1px solid #ffeaa7', 
+            borderRadius: '8px', 
+            marginTop: '0.5rem',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <FaStore style={{ marginRight: '0.5rem', color: '#856404' }} />
+            <span style={{ color: '#856404', fontWeight: '500' }}>
+              El pago en efectivo solo está disponible para retiro en local
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="form-group delivery-options">
+          <label className="delivery-label">Opción de entrega:</label>
+          <div className="delivery-choice" style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <label 
+              className="radio-option" 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                cursor: 'pointer',
+                padding: '0.75rem 1rem',
+                border: '2px solid',
+                borderColor: formData.deliveryOption === 'pickup' ? '#009688' : '#ddd',
+                borderRadius: '8px',
+                backgroundColor: formData.deliveryOption === 'pickup' ? '#e0f2f1' : '#fff',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <input
+                type="radio"
+                name="deliveryOption"
+                value="pickup"
+                checked={formData.deliveryOption === 'pickup'}
+                onChange={handleDeliveryOptionChange}
+                style={{ marginRight: '0.5rem' }}
+              />
+              <FaStore style={{ marginRight: '0.5rem', color: '#009688' }} /> Retiro en local
+            </label>
+            <label 
+              className="radio-option" 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                cursor: 'pointer',
+                padding: '0.75rem 1rem',
+                border: '2px solid',
+                borderColor: formData.deliveryOption === 'delivery' ? '#009688' : '#ddd',
+                borderRadius: '8px',
+                backgroundColor: formData.deliveryOption === 'delivery' ? '#e0f2f1' : '#fff',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <input
+                type="radio"
+                name="deliveryOption"
+                value="delivery"
+                checked={formData.deliveryOption === 'delivery'}
+                onChange={handleDeliveryOptionChange}
+                style={{ marginRight: '0.5rem' }}
+              />
+              <FaTruck style={{ marginRight: '0.5rem', color: '#009688' }} /> Envío a domicilio
+            </label>
+          </div>
+        </div>
+      )}
+
+      {/* Campo de dirección - solo si se selecciona envío a domicilio y NO es efectivo */}
+      {formData.deliveryOption === 'delivery' && paymentMethod !== 'cash' && (
+        <div className="form-group">
+          <label htmlFor="address"><FaMapMarkerAlt style={{marginRight: 6, color: '#009688'}} /> Dirección *</label>
+          <textarea
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            disabled={loading}
+            rows="3"
+            required
+            placeholder="Ingresa tu dirección completa"
+          />
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="notes"><FaStickyNote style={{marginRight: 6, color: '#009688'}} /> Notas adicionales</label>

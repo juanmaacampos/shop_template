@@ -1,0 +1,49 @@
+{
+  "name": "cms-menu-integration-sdk",
+  "version": "1.0.0",
+  "description": "SDK para integrar menús CMS en aplicaciones React",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "examples"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint src --ext js,jsx",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "firebase": ">=10.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "keywords": [
+    "react",
+    "menu",
+    "cms",
+    "restaurant",
+    "firebase",
+    "sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tu-usuario/cms-menu.git",
+    "directory": "integration-sdk"
+  },
+  "license": "MIT"
+}
