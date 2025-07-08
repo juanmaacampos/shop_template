@@ -1,37 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMenu, useCart } from './useMenu.js';
-import { useRealTimeStock } from './useRealTimeStock.js';
-import { StockIndicator } from './StockIndicator.jsx';
-import { getFirestore } from 'firebase/firestore';
-import ProductCard from '../components/ui/ProductCard.jsx';
 import './MenuComponents.css';
-import './StockIndicator.css';
-import { FaUtensils, FaSyncAlt } from 'react-icons/fa';
 
-// Utilidades para manejar items ocultos y disponibilidad
-function isItemVisible(item) {
-  return !item.isHidden;
+// Funciones helper para manejo de stock
+function getStockClass(item) {
+  if (!item.trackStock) return 'stock-unlimited';
+  if (item.stock <= 0 || item.isAvailable === false) return 'stock-out';
+  if (item.stock <= (item.minStock || 5)) return 'stock-low';
+  return 'stock-normal';
+}
+
+function getStockIcon(item) {
+  if (!item.trackStock) return '∞';
+  if (item.stock <= 0 || item.isAvailable === false) return '❌';
+  if (item.stock <= (item.minStock || 5)) return '⚠️';
+  return '✅';
+}
+
+function getStockText(item) {
+  if (!item.trackStock) return 'Ilimitado';
+  if (item.stock <= 0 || item.isAvailable === false) return 'Sin stock';
+  if (item.stock <= (item.minStock || 5)) return `${item.stock} (Últimas unidades)`;
+  return `${item.stock} disponibles`;
 }
 
 function isItemAvailable(item) {
-  if (item.isHidden) return false;
   if (item.isAvailable === false) return false;
   if (!item.trackStock) return true;
   return item.stock > 0;
 }
 
 function getButtonClass(item) {
-  if (item.isHidden) return 'add-button hidden';
   if (!isItemAvailable(item)) return 'add-button disabled';
   if (item.trackStock && item.stock <= (item.minStock || 5)) return 'add-button warning';
   return 'add-button';
 }
 
 function getButtonText(item, terminology = {}) {
-  if (item.isHidden) return 'Oculto';
   if (item.isAvailable === false) return 'No disponible';
   if (item.trackStock && item.stock <= 0) return 'Sin stock';
-  if (item.trackStock && item.stock <= 5) return `Agregar (quedan ${item.stock})`;
+  if (item.trackStock && item.stock <= (item.minStock || 5)) return `Agregar (quedan ${item.stock})`;
   return terminology.addToCart || 'Agregar al carrito';
 }
 
@@ -66,7 +74,7 @@ function ProductImageGallery({ images, itemName, className = "item-image" }) {
   
   // Si no hay imágenes o el array está vacío, usar el fallback
   if (!images || !Array.isArray(images) || images.length === 0) {
-    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
+    return <div className={`${className} item-placeholder`}>🍽️</div>;
   }
 
   const currentImage = images[currentImageIndex];
@@ -134,7 +142,7 @@ function ProductImageGallery({ images, itemName, className = "item-image" }) {
 }
 
 // Componente para imagen con loading y error handling mejorado
-function ImageWithFallback({ src, alt, className, placeholder = <FaUtensils /> }) {
+function ImageWithFallback({ src, alt, className, placeholder = "🍽️" }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -146,27 +154,30 @@ function ImageWithFallback({ src, alt, className, placeholder = <FaUtensils /> }
   const handleError = () => {
     setLoading(false);
     setError(true);
+    console.warn(`Error al cargar imagen: ${src}`);
   };
 
-  // Si no hay src válido, mostrar icono de cubiertos
-  if (!src || src.length === 0) {
-    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
+  // Si no hay src, mostrar placeholder directamente
+  if (!src) {
+    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
   }
 
-  // Si hubo error, mostrar icono de cubiertos
+  // Si hubo error, mostrar placeholder
   if (error) {
-    return <div className={`${className} item-placeholder`}><FaUtensils /></div>;
+    return <div className={`${className} item-placeholder`}>{placeholder}</div>;
   }
 
   return (
-    <div className={className}>
-      {loading && <div className="item-placeholder"><FaSyncAlt className="spin" /></div>}
+    <div className={className} style={{ position: 'relative' }}>
+      {loading && <div className="item-placeholder">🔄</div>}
       <img 
         src={src} 
         alt={alt}
         onLoad={handleLoad}
         onError={handleError}
         loading="lazy"
+        crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
         style={{ 
           display: loading ? 'none' : 'block',
           width: '100%',
@@ -187,10 +198,7 @@ export function MenuDisplay({
   showImages = true,
   showPrices = true,
   showDescription = true,
-  terminology = {},
-  businessId = null,
-  enableRealTimeStock = false,
-  db = null // Nueva prop para la conexión a Firestore
+  terminology = {}
 }) {
   if (loading) {
     return <div className="menu-loading">🍽️ Cargando {terminology.menuName || 'menú'} delicioso...</div>;
@@ -207,7 +215,7 @@ export function MenuDisplay({
   return (
     <div className="menu-display">
       {menu.map(category => (
-        <div key={category.id} className="menu-category" id={`category-${category.id}`}>
+        <div key={category.id} className="menu-category">
           <h2 className="category-title">{category.name}</h2>
           {category.description && (
             <p className="category-description">{category.description}</p>
@@ -222,10 +230,6 @@ export function MenuDisplay({
                 showPrice={showPrices}
                 showDescription={showDescription}
                 terminology={terminology}
-                businessId={businessId}
-                categoryId={category.id}
-                enableRealTimeStock={enableRealTimeStock}
-                db={db}
               />
             ))}
           </div>
@@ -235,70 +239,72 @@ export function MenuDisplay({
   );
 }
 
-// Componente individual del item usando ProductCard
+// Componente individual del item
 export function MenuItem({ 
   item, 
   onAddToCart, 
   showImage = true, 
   showPrice = true, 
   showDescription = true,
-  terminology = {},
-  businessId = null,
-  categoryId = null,
-  enableRealTimeStock = false,
-  db = null // Nueva prop para la conexión a Firestore
+  terminology = {}
 }) {
-  // Función helper para obtener las imágenes del item
+  // Determinar qué imagen usar: múltiples imágenes o imagen única
   const getItemImages = (item) => {
-    // Si tiene múltiples imágenes (nuevo formato)
+    // Si tiene múltiples imágenes, usarlas
     if (item.images && Array.isArray(item.images) && item.images.length > 0) {
       return item.images;
     }
-    
-    // Si tiene imagen única (formato legacy)
-    if (item.image) {
-      return [{ url: item.image }];
+    // Si tiene imageUrl (compatibilidad), crear array con una imagen
+    if (item.imageUrl) {
+      return [{ url: item.imageUrl, id: 'legacy-image' }];
     }
-    
     // Sin imágenes
     return [];
   };
 
   const itemImages = getItemImages(item);
 
-  // Hook para stock en tiempo real si está habilitado
-  const stockEnabled = enableRealTimeStock && businessId && categoryId && item.trackStock && db;
-  const productIds = stockEnabled ? [{ id: item.id, categoryId }] : [];
-  
-  const {
-    stockData,
-    isRealTimeActive,
-    getStockStatus,
-    getProductStock,
-    isProductAvailable,
-    lastUpdated
-  } = useRealTimeStock(productIds, businessId, stockEnabled, db);
-  
-  // Crear un item mejorado con datos de stock en tiempo real si están disponibles
-  const enhancedItem = {
-    ...item,
-    stock: stockEnabled ? getProductStock(item.id) : (item.stock || 0),
-    isAvailable: stockEnabled ? isProductAvailable(item.id) : (item.isAvailable !== false)
-  };
-
   return (
-    <ProductCard
-      item={enhancedItem}
-      onAddToCart={onAddToCart}
-      showImage={showImage}
-      showPrice={showPrice}
-      showDescription={showDescription}
-      terminology={terminology}
-      businessId={businessId}
-      categoryId={categoryId}
-      enableRealTimeStock={enableRealTimeStock}
-      db={db}
-    />
+    <div className="menu-item">
+      {showImage && (
+        <ProductImageGallery 
+          images={itemImages}
+          itemName={item.name}
+          className="item-image"
+        />
+      )}
+      
+      <div className="item-content">
+        <div className="item-header">
+          <h3 className="item-name">{item.name}</h3>
+          {showPrice && <span className="item-price">${item.price}</span>}
+        </div>
+        
+        {showDescription && item.description && (
+          <p className="item-description">{item.description}</p>
+        )}
+        
+        <div className="item-tags">
+          {item.isFeatured && <span className="tag featured">⭐ Destacado</span>}
+          {!item.isAvailable && <span className="tag unavailable">No disponible</span>}
+          {item.trackStock && typeof item.stock === 'number' && (
+            <span className={`tag stock ${getStockClass(item)}`}>
+              {getStockIcon(item)} Stock: {getStockText(item)}
+            </span>
+          )}
+        </div>
+        
+        {onAddToCart && (
+          <button 
+            className={`add-button ${getButtonClass(item)}`}
+            onClick={() => onAddToCart(item)}
+            disabled={!isItemAvailable(item)}
+          >
+            {getButtonText(item, terminology)}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -427,12 +433,7 @@ export function Cart({
 }
 
 // Componente completo con menú y carrito integrado
-export function MenuWithCart({ 
-  menuSDK, 
-  showImages = true, 
-  terminology = {},
-  enableRealTimeStock = false 
-}) {
+export function MenuWithCart({ menuSDK, showImages = true, terminology = {} }) {
   const { restaurant, business, menu, loading, error } = useMenu(menuSDK);
   const { 
     cart, 
@@ -448,16 +449,12 @@ export function MenuWithCart({
   const businessType = businessData?.businessType || 'restaurant';
   const icon = businessType === 'store' ? '🏪' : '🍽️';
 
-  // Obtener la instancia de db del menuSDK si existe
-  const db = menuSDK?.db || null;
-  const businessId = menuSDK?.businessId || null;
-
   return (
     <div className="menu-with-cart">
       <div className="menu-section">
         {businessData && (
           <div className="restaurant-header">
-            <h1 className="restaurant-title">Categorias:</h1>
+            <h1>{icon} {businessData.name}</h1>
             {businessData.description && (
               <p className="restaurant-description">{businessData.description}</p>
             )}
@@ -471,9 +468,6 @@ export function MenuWithCart({
           error={error}
           showImages={showImages}
           terminology={terminology}
-          businessId={businessId}
-          enableRealTimeStock={enableRealTimeStock}
-          db={db}
         />
       </div>
       

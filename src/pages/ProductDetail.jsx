@@ -8,6 +8,8 @@ import {
 } from 'react-icons/fa';
 import { Navbar } from '../components/navigation';
 import Cart from '../components/checkout/Cart';
+import { ProductImageGallery } from '../gallery-components/MenuComponents.jsx';
+import '../gallery-components/MenuComponents.css';
 import './ProductDetail.css';
 
 // Componente para productos sugeridos
@@ -92,7 +94,6 @@ const ProductDetail = () => {
   const { addToCart, cartCount, cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [showAddedNotification, setShowAddedNotification] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showCart, setShowCart] = useState(false);
@@ -110,10 +111,6 @@ const ProductDetail = () => {
       
       if (foundProduct) {
         setProduct(foundProduct);
-        // Si el producto tiene múltiples imágenes, usar la primera como seleccionada
-        if (foundProduct.images && foundProduct.images.length > 0) {
-          setSelectedImage(0);
-        }
       } else {
         setProduct(null);
       }
@@ -125,7 +122,6 @@ const ProductDetail = () => {
     // Marcar como transición y resetear estados cuando cambia el producto
     setIsTransitioning(true);
     setQuantity(1);
-    setSelectedImage(0);
     setShowAddedNotification(false);
     
     // Scroll al top de la página
@@ -197,7 +193,40 @@ const ProductDetail = () => {
   }
 
   const stockStatus = getStockStatus();
-  const images = product.images || (product.imageUrl || product.image ? [product.imageUrl || product.image] : []);
+  
+  // Función helper para extraer URL de imagen
+  const extractImageUrl = (img) => {
+    if (typeof img === 'string') return img;
+    if (typeof img === 'object' && img) {
+      return img.url || img.src || img.imageUrl || img.image || '';
+    }
+    return '';
+  };
+  
+  // Preparar imágenes para la galería
+  const images = (() => {
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      // Si ya es un array de imágenes, convertir al formato esperado
+      const processedImages = product.images.map((img, index) => {
+        const url = extractImageUrl(img);
+        return {
+          url: url,
+          id: `image-${index}`,
+          original: img
+        };
+      }).filter(img => img.url); // Filtrar imágenes sin URL válida
+      
+      return processedImages;
+    } else if (product.imageUrl || product.image) {
+      // Si solo hay una imagen, crear array con una imagen
+      return [{ 
+        url: product.imageUrl || product.image, 
+        id: 'main-image',
+        original: product.imageUrl || product.image
+      }];
+    }
+    return [];
+  })();
 
   return (
     <div className="product-detail-page" style={{ paddingTop: '80px' }}>
@@ -232,40 +261,17 @@ const ProductDetail = () => {
       )}
 
       <div className="product-detail-container">
-        {/* Galería de imágenes */}
-        <div className="product-gallery">
-          <div className="main-image">
-            {images.length > 0 ? (
-              <img 
-                src={images[selectedImage]} 
-                alt={product.name}
-                className="product-main-image"
-              />
-            ) : (
-              <div className="product-placeholder">
-                <FaUtensils />
-              </div>
-            )}
-            
-            {product.isFeatured && (
-              <div className="featured-badge">
-                <FaStar style={{color:'#ffc107', marginRight:4}} /> Destacado
-              </div>
-            )}
-          </div>
-
-          {/* Miniaturas si hay múltiples imágenes */}
-          {images.length > 1 && (
-            <div className="image-thumbnails">
-              {images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${product.name} ${index + 1}`}
-                  className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                  onClick={() => setSelectedImage(index)}
-                />
-              ))}
+        {/* Galería de imágenes mejorada */}
+        <div className="product-gallery-container">
+          <ProductImageGallery 
+            images={images} 
+            itemName={product.name} 
+            className="product-detail-gallery"
+          />
+          
+          {product.isFeatured && (
+            <div className="featured-badge">
+              <FaStar style={{color:'#ffc107', marginRight:4}} /> Destacado
             </div>
           )}
         </div>
