@@ -25,6 +25,33 @@ function App() {
     setShowCart(true);
   };
 
+  // Manejar el scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (showCart) {
+      // Prevenir el scroll del fondo
+      document.body.classList.add('modal-open');
+      
+      // Prevenir eventos de touch que puedan causar scroll en el fondo
+      const preventTouchMove = (e) => {
+        if (!e.target.closest('.cart-container')) {
+          e.preventDefault();
+        }
+      };
+      
+      // Agregar listeners para prevenir scroll en móviles
+      document.addEventListener('touchmove', preventTouchMove, { passive: false });
+      document.addEventListener('wheel', preventTouchMove, { passive: false });
+      
+      return () => {
+        document.body.classList.remove('modal-open');
+        document.removeEventListener('touchmove', preventTouchMove);
+        document.removeEventListener('wheel', preventTouchMove);
+      };
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+  }, [showCart]);
+
   useEffect(() => {
     // Optimize for mobile devices
     optimizeForMobile();
@@ -70,7 +97,15 @@ function App() {
       <Navbar onCartClick={handleCartClick} itemCount={safeItemCount} />
       
       {showCart && (
-        <div className="cart-overlay" onClick={(e) => e.target.classList.contains('cart-overlay') && setShowCart(false)}>
+        <div 
+          className="cart-overlay" 
+          onClick={(e) => e.target.classList.contains('cart-overlay') && setShowCart(false)}
+          onTouchStart={(e) => {
+            if (e.target.classList.contains('cart-overlay')) {
+              e.preventDefault();
+            }
+          }}
+        >
           <Cart 
             cart={cart}
             updateQuantity={updateQuantity}

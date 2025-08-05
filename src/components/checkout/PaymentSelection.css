@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
+  /* Remover overflow - dejamos que el contenedor padre maneje el scroll */
+  height: 100%;
 }
 
 .payment-header {
@@ -150,6 +152,8 @@
 @media (max-width: 768px) {
   .payment-selection {
     padding: 0.5rem;
+    /* Remover overflow - el contenedor padre maneja el scroll */
+    height: 100%;
   }
   
   .payment-method {
@@ -169,5 +173,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    /* Hacer que el header sea fijo en móviles */
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 }

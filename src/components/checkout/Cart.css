@@ -42,6 +42,32 @@
   border-left: 4px solid var(--store-secondary);
 }
 
+.cart-main-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.cart-main-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart-main-container::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.cart-main-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.cart-main-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
 .cart-header {
   display: flex;
   justify-content: space-between;
@@ -221,22 +247,41 @@
     justify-content: center;
     align-items: center;
     padding: 1rem;
+    /* Prevenir scroll del fondo */
+    position: fixed;
+    overflow: hidden;
+    /* Asegurar que capture todos los eventos de touch */
+    touch-action: none;
   }
   
   .cart-container {
     width: 100%;
     height: 90vh;
-    border-radius: 12px;
-    /* Permitir scroll vertical en móviles */
     max-height: 90vh;
+    border-radius: 12px;
+    /* Contener el scroll dentro del modal */
+    overflow: hidden;
+    /* Permitir scroll solo dentro del container */
+    touch-action: auto;
+  }
+  
+  .cart-main-container {
+    flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    /* Asegurar que el scroll esté contenido */
+    max-height: calc(90vh - 80px); /* Restar altura del header */
+    padding-bottom: 1rem;
+    /* Mejorar comportamiento de scroll en móviles */
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
   
   .cart-items {
-    max-height: 55vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    /* Remover scroll redundante ya que cart-main-container maneja el scroll */
+    overflow: visible;
+    max-height: none;
     padding-bottom: 1rem;
   }
 }

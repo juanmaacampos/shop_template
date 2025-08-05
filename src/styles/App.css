@@ -241,7 +241,55 @@ body {
 /* Scrollable content for modals and forms */
 .scrollable-content {
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 90vh;
   padding-right: 8px; /* for scrollbar space */
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Clase para prevenir scroll en el body cuando el modal está abierto */
+body.modal-open {
+  overflow: hidden;
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  /* Prevenir scroll en móviles */
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+/* Para prevenir que el fondo se mueva en iOS */
+@media (max-width: 768px) {
+  body.modal-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-overflow-scrolling: auto;
+  }
 }

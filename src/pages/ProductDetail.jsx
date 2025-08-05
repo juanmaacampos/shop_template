@@ -358,7 +358,7 @@ const ProductDetail = () => {
                   className="btn btn-secondary buy-now-btn"
                   onClick={() => {
                     handleAddToCart();
-                    setTimeout(() => navigate('/'), 500);
+                    setTimeout(() => setShowCart(true), 500);
                   }}
                 >
                   Comprar ahora

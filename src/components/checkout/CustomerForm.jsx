@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './CustomerForm.css';
-import { FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaStore, FaTruck } from 'react-icons/fa';
+import { FaUser, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaStickyNote, FaStore, FaTruck, FaInfoCircle } from 'react-icons/fa';
 
 const CustomerForm = ({ onSubmit, loading, paymentMethod }) => {
   const [formData, setFormData] = useState({
@@ -206,7 +206,7 @@ const CustomerForm = ({ onSubmit, loading, paymentMethod }) => {
             disabled={loading}
             rows="3"
             required
-            placeholder="Ingresa tu dirección completa"
+            placeholder="Ingresa tu dirección: Calle y número"
           />
         </div>
       )}
@@ -218,11 +218,29 @@ const CustomerForm = ({ onSubmit, loading, paymentMethod }) => {
           name="notes"
           value={formData.notes}
           onChange={handleChange}
-          placeholder="Instrucciones especiales, alergias, etc."
+          placeholder="Instrucciones especiales, aclaraciones, etc."
           disabled={loading}
           rows="3"
         />
       </div>
+
+      {/* Aclaración para Mercado Pago */}
+      {paymentMethod === 'mercadopago' && (
+        <div className="mercadopago-note" style={{ 
+          marginTop: '1rem', 
+          fontSize: '0.9rem', 
+          color: '#009688', 
+          display: 'flex', 
+          alignItems: 'center', 
+          backgroundColor: '#e0f7fa', 
+          padding: '0.75rem', 
+          borderRadius: '8px', 
+          border: '1px solid #b2ebf2' 
+        }}>
+          <FaInfoCircle style={{ marginRight: '0.5rem', color: '#00796b' }} />
+          <span>Al proceder, serás redirigido a la ventana de Mercado Pago Checkout para completar tu pago de forma segura.</span>
+        </div>
+      )}
 
       <button type="submit" className="submit-btn" disabled={loading}>
         {loading ? 'Procesando...' : 'Proceder al Pago'}

@@ -1,5 +1,6 @@
 import './PaymentSelection.css';
 import { FaMoneyBillWave, FaCreditCard, FaUniversity, FaArrowRight, FaLock, FaBoxOpen } from 'react-icons/fa';
+import mpLogo from '../../img/mp.svg';
 
 const PaymentSelection = ({ onSelect, onBack, total }) => {
   return (
@@ -15,27 +16,16 @@ const PaymentSelection = ({ onSelect, onBack, total }) => {
 
       <div className="payment-methods">
         <div 
-          className="payment-method cash"
-          onClick={() => onSelect('cash')}
-        >
-          <div className="payment-icon"><FaMoneyBillWave style={{ color: '#28a745' }} /></div>
-          <div className="payment-info">
-            <h4>Efectivo</h4>
-            <p>Pago al retirar en tienda</p>
-            <small>Coordinaremos por WhatsApp</small>
-          </div>
-          <div className="payment-arrow"><FaArrowRight style={{ color: '#888' }} /></div>
-        </div>
-
-        <div 
           className="payment-method mercadopago"
           onClick={() => onSelect('mercadopago')}
         >
-          <div className="payment-icon"><FaCreditCard style={{ color: '#0077ff' }} /></div>
+          <div className="payment-icon">
+            <img src={mpLogo} alt="Mercado Pago" style={{ width: '35px', height: '35px' }} />
+          </div>
           <div className="payment-info">
-            <h4>MercadoPago</h4>
+            <h4>Mercado Pago</h4>
             <p>Tarjeta de crédito/débito</p>
-            <small>Pago seguro online con envío</small>
+            <small>Pago seguro al instante</small>
           </div>
           <div className="payment-arrow"><FaArrowRight style={{ color: '#888' }} /></div>
         </div>
@@ -52,11 +42,24 @@ const PaymentSelection = ({ onSelect, onBack, total }) => {
           </div>
           <div className="payment-arrow"><FaArrowRight style={{ color: '#888' }} /></div>
         </div>
+
+        <div 
+          className="payment-method cash"
+          onClick={() => onSelect('cash')}
+        >
+          <div className="payment-icon"><FaMoneyBillWave style={{ color: '#28a745' }} /></div>
+          <div className="payment-info">
+            <h4>Efectivo</h4>
+            <p>Pago al retirar en tienda</p>
+            <small>Coordinaremos por WhatsApp</small>
+          </div>
+          <div className="payment-arrow"><FaArrowRight style={{ color: '#888' }} /></div>
+        </div>
       </div>
 
       <div className="payment-note">
         <p><FaLock style={{ color: '#28a745', marginRight: 6 }} /> Todos los pagos son seguros y protegidos</p>
-        <p><FaBoxOpen style={{ color: '#0077ff', marginRight: 6 }} /> Envío gratuito en compras superiores a $5000</p>
+        <p><FaBoxOpen style={{ color: '#0077ff', marginRight: 6 }} /> Envío gratuito en compras superiores a $20000</p>
       </div>
     </div>
   );
