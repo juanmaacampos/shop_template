@@ -254,22 +254,24 @@ async function handlePaymentNotification(paymentId) {
 
     // 3a. Obtener el paymentId (ya lo tenemos)
     
-    // 3b. Obtener Access Token general desde Secret Manager
+    // 3b. Primero intentamos con el token específico del business conocido
+    // Si no funciona, necesitaremos obtener el business_id desde el payment
     const projectId = process.env.GCLOUD_PROJECT;
-    const secretName = 'SHOP_TEMPLATE_MP_ACCESS_TOKEN_GENERAL';
-    const secretPath = `projects/${projectId}/secrets/${secretName}/versions/latest`;
+    const knownBusinessId = 'OANNHilb2kZOVQKx7fb80hPrAL92'; // Business ID del config
+    let secretName = `SHOP_TEMPLATE_MP_ACCESS_TOKEN_${knownBusinessId}`;
+    let secretPath = `projects/${projectId}/secrets/${secretName}/versions/latest`;
 
     let accessToken;
     try {
-      logger.info(`🔐 Fetching general secret: ${secretName}`);
+      logger.info(`🔐 Fetching business-specific secret: ${secretName}`);
       const [version] = await secretClient.accessSecretVersion({
         name: secretPath,
       });
       accessToken = version.payload.data.toString();
-      logger.info("✅ General access token retrieved successfully");
+      logger.info("✅ Business-specific access token retrieved successfully");
     } catch (error) {
-      logger.error("❌ Failed to retrieve general access token from Secret Manager:", error);
-      throw new Error(`Failed to retrieve general MercadoPago access token. Please check Secret Manager configuration.`);
+      logger.error("❌ Failed to retrieve business-specific access token from Secret Manager:", error);
+      throw new Error(`Failed to retrieve MercadoPago access token for business ${knownBusinessId}. Please check Secret Manager configuration.`);
     }
 
     // 3c. Configurar MercadoPago SDK
@@ -291,16 +293,23 @@ async function handlePaymentNotification(paymentId) {
     logger.info("✅ Payment details retrieved:", {
       id: mpPayment.id,
       status: mpPayment.status,
-      external_reference: mpPayment.external_reference
+      external_reference: mpPayment.external_reference,
+      metadata: mpPayment.metadata
     });
 
-    // 3e. Extraer status y external_reference
+    // 3e. Extraer status, external_reference y business_id
     const paymentStatus = mpPayment.status;
     const orderId = mpPayment.external_reference;
+    const businessIdFromPayment = mpPayment.metadata?.business_id;
 
     if (!orderId) {
       logger.warn("⚠️ Payment has no external_reference (orderId)");
       return;
+    }
+
+    // Validar que el business_id coincida (seguridad adicional)
+    if (businessIdFromPayment && businessIdFromPayment !== knownBusinessId) {
+      logger.warn(`⚠️ Business ID mismatch: expected ${knownBusinessId}, got ${businessIdFromPayment}`);
     }
 
     logger.info(`📦 Processing order update - Order: ${orderId}, Status: ${paymentStatus}`);
@@ -391,9 +400,9 @@ exports.createMercadoPagoPreferenceHTTP = onRequest(async (req, res) => {
       totalAmount,
       orderId = `order_${Date.now()}`, // Generate if not provided
       backUrls = {
-        success: 'https://juanmaacampos.github.io/restaurant_template/success',
-        pending: 'https://juanmaacampos.github.io/restaurant_template/pending',
-        failure: 'https://juanmaacampos.github.io/restaurant_template/failure'
+        success: 'https://juanmaacampos.github.io/shop_template/#/payment/success',
+        pending: 'https://juanmaacampos.github.io/shop_template/#/payment/pending',
+        failure: 'https://juanmaacampos.github.io/shop_template/#/payment/failure'
       },
       notes = ""
     } = req.body;
