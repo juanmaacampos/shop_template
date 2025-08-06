@@ -157,6 +157,13 @@
   background: #e3f2fd;
 }
 
+@media (max-width: 1200px) {
+  .product-search-container, .product-search-container .search-bar-container {
+    max-width: 300px;
+    min-width: 200px;
+  }
+}
+
 @media (max-width: 900px) {
   .product-search-container, .product-search-container .search-bar-container {
     max-width: 99vw;

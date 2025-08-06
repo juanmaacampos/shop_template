@@ -24,9 +24,9 @@
   align-items: center;
   max-width: 500px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
   width: 100%;
-  gap: 2rem; /* Añadido para separar los grupos */
+  gap: 0.5rem;
 }
 
 .nav-items {
@@ -34,8 +34,7 @@
   justify-content: space-around;
   align-items: center;
   flex: 1;
-  gap: 2.5rem; /* Aumentado para separar los ítems */
-  border: 2px dashed #e55a2e; /* Borde temporal para depuración */
+  gap: 0.5rem;
 }
 
 .nav-item {
@@ -74,14 +73,13 @@
 
 /* Estilos específicos para el carrito */
 .cart-nav-item {
-  margin-left: 1rem;
   position: relative;
   background: linear-gradient(135deg, var(--store-secondary), var(--store-accent)) !important;
   border: 2px solid rgba(0, 169, 165, 0.3) !important;
   color: white !important;
   box-shadow: 0 4px 12px rgba(0, 169, 165, 0.3);
   border-radius: 15px !important;
-  min-width: 70px !important;
+  min-width: 60px !important;
   padding: 0.75rem !important;
 }
 
@@ -282,6 +280,91 @@
   border-color: #e55a2e;
   transform: scale(1.15);
   animation: none;
+}
+
+/* Media queries para mejor responsividad */
+@media (max-width: 480px) {
+  .navbar-container {
+    max-width: 100%;
+    padding: 0 0.25rem;
+    gap: 0.25rem;
+  }
+  
+  .nav-items {
+    gap: 0.25rem;
+  }
+  
+  .nav-item {
+    min-width: 50px;
+    padding: 0.4rem 0.2rem;
+  }
+  
+  .nav-icon {
+    font-size: 1.1rem;
+  }
+  
+  .nav-label {
+    font-size: 0.65rem;
+  }
+  
+  .cart-nav-item {
+    min-width: 50px !important;
+    padding: 0.4rem 0.2rem !important;
+  }
+  
+  .cart-nav-item .nav-icon {
+    font-size: 1.2rem !important;
+  }
+  
+  .cart-nav-item .nav-label {
+    font-size: 0.65rem !important;
+  }
+  
+  .cart-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    top: -8px;
+    right: -8px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .navbar-container {
+    max-width: 500px;
+    padding: 0 0.5rem;
+    gap: 0.4rem;
+  }
+  
+  .nav-items {
+    gap: 0.4rem;
+  }
+  
+  .nav-item {
+    min-width: 55px;
+    padding: 0.6rem 0.3rem;
+  }
+  
+  .nav-icon {
+    font-size: 1.15rem;
+  }
+  
+  .nav-label {
+    font-size: 0.68rem;
+  }
+  
+  .cart-nav-item {
+    min-width: 55px !important;
+    padding: 0.6rem 0.3rem !important;
+  }
+  
+  .cart-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    top: -10px;
+    right: -10px;
+  }
 }
 
 @media (min-width: 768px) {

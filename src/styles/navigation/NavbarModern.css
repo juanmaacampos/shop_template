@@ -15,12 +15,12 @@
 .navbar-modern-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   min-height: 72px;
-  gap: 2rem;
+  gap: 1rem;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
@@ -34,7 +34,7 @@
   color: #14b8a6;
   text-decoration: none;
   transition: color 0.2s;
-  margin-right: 2.5rem;
+  flex-shrink: 0;
 }
 .navbar-modern-logo:hover {
   color: #2dd4bf;
@@ -47,9 +47,9 @@
 .navbar-modern-menu {
   display: flex;
   align-items: center;
-  flex: 1 1 0%;
+  flex: 1;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 1rem;
 }
 
 .navbar-modern-link {
@@ -57,13 +57,13 @@
   align-items: center;
   color: #cbd5e1;
   background: #1e293b;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  font-size: 1.08rem;
+  font-size: 0.95rem;
   text-decoration: none;
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
-  margin: 0 0.25rem;
+  white-space: nowrap;
 }
 .navbar-modern-link:hover {
   color: #fff;
@@ -77,14 +77,14 @@
 .navbar-modern-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-left: 2.5rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .navbar-modern-search-desktop {
   display: block;
-  min-width: 260px;
-  max-width: 340px;
+  min-width: 200px;
+  max-width: 250px;
 }
 
 .navbar-modern-cart {
@@ -156,24 +156,80 @@
 }
 
 /* Mejoras para responsividad sin romper el diseño */
-@media (max-width: 1024px) {
+
+/* Pantallas grandes (1200px+) - Diseño completo */
+@media (min-width: 1200px) {
   .navbar-modern-container {
-    padding: 0 1rem;
+    padding: 0 2rem;
     gap: 1.5rem;
-  }
-  .navbar-modern-logo {
-    margin-right: 1.5rem;
   }
   .navbar-modern-menu {
     gap: 1.5rem;
   }
   .navbar-modern-actions {
-    margin-left: 1.5rem;
     gap: 1rem;
   }
   .navbar-modern-search-desktop {
-    min-width: 200px;
-    max-width: 250px;
+    min-width: 260px;
+    max-width: 340px;
+  }
+}
+
+/* Pantallas medianas-grandes (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .navbar-modern-container {
+    padding: 0 1.5rem;
+    gap: 1rem;
+  }
+  .navbar-modern-menu {
+    gap: 0.75rem;
+  }
+  .navbar-modern-link {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .navbar-modern-actions {
+    gap: 0.75rem;
+  }
+  .navbar-modern-search-desktop {
+    min-width: 180px;
+    max-width: 220px;
+  }
+}
+
+/* Pantallas medianas (901px - 1023px) - Compacto pero manteniendo elementos */
+@media (max-width: 1023px) and (min-width: 901px) {
+  .navbar-modern-container {
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+  .navbar-modern-menu {
+    gap: 0.5rem;
+  }
+  .navbar-modern-link {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+  }
+  .navbar-modern-link-icon {
+    font-size: 1rem;
+    margin-right: 0.4rem;
+  }
+  .navbar-modern-actions {
+    gap: 0.5rem;
+  }
+  .navbar-modern-search-desktop {
+    min-width: 150px;
+    max-width: 180px;
+  }
+  .navbar-modern-cart {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbar-modern-logo {
+    margin-right: 0;
   }
 }
 
@@ -218,16 +274,44 @@
     margin-right: 0.4rem;
   }
   .navbar-modern-actions {
-    gap: 0.7rem;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: space-between;
   }
   .navbar-modern-cart {
     padding: 0.4rem 1rem;
     font-size: 0.9rem;
+    flex: 1;
+    max-width: 120px;
+    justify-content: center;
   }
   .navbar-modern-cart-icon {
     font-size: 1.2rem;
   }
   .navbar-modern-mobile-menu {
     padding: 1rem;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .navbar-modern-container {
+    padding: 0.3rem 0.4rem;
+  }
+  .navbar-modern-logo {
+    font-size: 1.1rem;
+  }
+  .navbar-modern-logo-icon {
+    font-size: 1.4rem;
+    margin-right: 0.3rem;
+  }
+  .navbar-modern-cart {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    max-width: 100px;
+  }
+  .navbar-modern-cart-icon {
+    font-size: 1.1rem;
+    margin-right: 0.3rem;
   }
 }
